@@ -536,6 +536,7 @@ async function showDashboard() {
             dashboardReloadInterval = setInterval(async () => {
                 if (salon_Index >= 0 && document.getElementById('your-salon').classList.contains('active')) {
                     shouldScrollOnDashboard = false; // Prevent scroll on auto-reload
+                    
                     await GetYourSalon();
 
                     // Update dashboard data only
@@ -572,7 +573,7 @@ async function showDashboard() {
                     renderBookings(completed, 'completed-bookings-grid' , false);
                     renderBookings(canceled, 'canceled-bookings-grid' , false);
                 }
-            }, 5000);
+            }, 10000);
         }
 
         // Scroll to top only if manually navigated
