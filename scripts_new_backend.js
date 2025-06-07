@@ -395,7 +395,6 @@ function minutesToTime(minutes) {
 }
 // Login
 async function GetYourSalon() {
-    GetLocalDatas();
 
     if (salon_Index < 0) {
         your_salon = null;
@@ -418,15 +417,19 @@ async function GetYourSalon() {
                 throw new Error(result.error);
             }
             if(result.status == "success"){
-                salon_Index = result.salon_index;
                 
-                if (salon_Index >= 0) {
+                
+                if (result.salon_index >= 0) {
                     your_salon = result.salon;
-                    localStorage.setItem('salon_Index', salon_Index);
+                    if(salon_Index != result.salon_index){
+                        localStorage.setItem('salon_Index', salon_Index);
+                    }
                 } else {
                     your_salon = null;
-                    salon_Index = -1;
-                    localStorage.setItem('salon_Index', salon_Index);
+                    if(salon_Index != result.salon_index){
+                        salon_Index = -1;
+                        localStorage.setItem('salon_Index', salon_Index);
+                    }
                 }
             }else{
                 your_salon = null;
@@ -533,7 +536,7 @@ async function showDashboard() {
             dashboardReloadInterval = setInterval(async () => {
                 if (salon_Index >= 0 && salons[salon_Index] && document.getElementById('your-salon').classList.contains('active')) {
                     shouldScrollOnDashboard = false; // Prevent scroll on auto-reload
-                    your_salon = salons[salon_Index];
+                    await GetYourSalon();
 
                     // Update dashboard data only
                     if (dashSalonName) dashSalonName.textContent = your_salon.salonName || 'N/A';
@@ -678,6 +681,7 @@ async function loadData() {
             });
             localStorage.setItem("Device_Id", deviceId);
         }
+        GetLocalDatas();
         defaultSalonImages = await getDefaultImagesData();
     } catch (e) {
         console.error('Error loading:', e);
@@ -814,6 +818,8 @@ async function loginSalon() {
             localStorage.setItem('salon_Index', salon_Index);
             localStorage.setItem('salon_name' , salonName);
             localStorage.setItem('salon_password' , password);
+            
+            GetLocalDatas();
             setError('login-error', 'Loged.' , true);
             showDashboard();
         } else {
@@ -821,6 +827,8 @@ async function loginSalon() {
             localStorage.setItem('salon_Index', salon_Index);
             localStorage.setItem('salon_name' , "");
             localStorage.setItem('salon_password' , "");
+
+            GetLocalDatas();
             setError('login-error', 'Invalid salon name or password.');
         }
         
@@ -931,6 +939,7 @@ async function registerSalon() {
             localStorage.setItem('salon_name' , salonName);
             localStorage.setItem('salon_password' , password);
 
+            GetLocalDatas();
             setError('register-error', 'Salon registered successfully!' , true);
             showDashboard();
         }else{
