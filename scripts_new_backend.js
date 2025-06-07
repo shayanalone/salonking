@@ -1109,6 +1109,8 @@ async function saveSettings() {
         }
         if(result.status == "success"){
             your_salon = result.salon;
+            localStorage.setItem('salon_name' , salonName);
+            localStorage.setItem('salon_password' , password);
             setError('settings-error', 'Settings saved successfully!' , true);
             showDashboard();
         }else{
