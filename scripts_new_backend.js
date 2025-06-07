@@ -536,7 +536,6 @@ async function showDashboard() {
             dashboardReloadInterval = setInterval(async () => {
                 if (salon_Index >= 0 && document.getElementById('your-salon').classList.contains('active')) {
                     shouldScrollOnDashboard = false; // Prevent scroll on auto-reload
-                    console.log("1111");
                     await GetYourSalon();
 
                     // Update dashboard data only
