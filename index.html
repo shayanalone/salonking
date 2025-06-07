@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salon King</title>
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="slideshow-container">
+    <div id="bg1" class="slideshow-image active"></div>
+    <div id="bg2" class="slideshow-image"></div>
+  </div>
+
+    <header id="footer">
+        <button id="back-btn" class="back-btn" onclick="showSection('home')">Back</button>
+        <div class="logo">Salon King</div>
+    </header>
+    <!-- Home Section -->
+    <div id="home" class="section active" style="padding: 0rem;">
+        <div style="height: 52px;"></div>
+        <div class="back-image-cover">
+            <div class="Home-Welcome-Title">
+                <h1>Discover top Salons near you</h1>
+                <p id="home-error" class="message"></p>
+                <p style="margin-bottom: 10px;">Find and book your perfect salon appointment with ease.</p>
+                <p>If you want to register so click Your Salon</p>
+                <div style="margin: 1rem 0;">
+                    <button class="btn" onclick="showSection('your-salon')">Your Salon</button>
+                    <button class="btn" onclick="showSection('your-booked-salon')">Your Booked Salon</button>
+                </div>
+                <div style="height: 10px;"></div>
+                <h2 style="font-size: 107%;">All Salons Registered</h2>
+                <h3 style="font-size: 95%; margin-top: -5px;">In our Platform</h3>
+                <hr>
+            </div>
+        </div>
+        <div id="salon-grid" class="salon-grid" style="padding: 0.75rem;">
+            
+        </div>
+    </div>
+
+    <!-- Your Salon Section -->
+    <div id="your-salon" class="section">
+        <div style="height: 52px;"></div>
+        <div id="salon-loading" class="form-container">
+            <h2>Loading</h2>
+        </div>
+        <div id="salon-login" class="form-container">
+            <h2>Salon Owner Login</h2>
+            <p id="login-error" class="message"></p>
+            <label for="login-salon-name">Salon Name</label>
+            <input type="text" id="login-salon-name" placeholder="Salon Name" required>
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="Password" required>
+            <br>
+            <button class="btn" onclick="loginSalon()">Login</button>
+            <button class="btn" onclick="showForm('salon-register')">Register</button>
+            <button class="btn" onclick="showSection('home')">Back to Home</button>
+        </div>
+        <div id="salon-register" class="form-container" style="display: none;">
+            <h2>Salon Registration</h2>
+            <p id="register-error" class="message"></p>
+
+            <label style="font-weight: bold; color: rgb(0, 85, 255);" for="reg-permission-code">Permission Code</label>
+            <label for="reg-permission-code">Ask this Permission code by Shayan Shahid: email:<a href="https://mail.google.com/mail/?view=cm&to=shayanwork123@gmail.com&su=My name is &body=Mujhe Madad Chaye ke " target="_blank">
+            shayanwork123@gmail.com</a></p>
+            <input type="text" id="reg-permission-code" placeholder="Permission Code" required>
+
+            <label style="font-weight: bold;" for="reg-owner-name">Owner Name</label>
+            <input type="text" id="reg-owner-name" placeholder="Owner Name" required>
+
+            <label style="font-weight: bold;" for="reg-owner-number">Owner Number</label>
+            <input type="tel" id="reg-owner-number" placeholder="Owner Number" required>
+
+            <label style="font-weight: bold;" for="reg-salon-name">Salon Name</label>
+            <input type="text" id="reg-salon-name" placeholder="Salon Name" required>
+
+            <label style="font-weight: bold;" for="reg-password">Password</label>
+            <input type="password" id="reg-password" placeholder="Password" required>
+
+            <label style="font-weight: bold;" for="reg-location">Location</label>
+            <input type="text" id="reg-location" placeholder="Location" required>
+
+            <label style="font-weight: bold;" for="reg-seatCount">Seats Available</label>
+            <input type="number" id="reg-seatCount" placeholder="Seats Available" required>
+
+            <label style="font-weight: bold;" for="reg-open-time">Opening Time</label>
+            <input type="time" id="reg-open-time" required>
+
+            <label style="font-weight: bold;" for="reg-close-time">Closing Time</label>
+            <input type="time" id="reg-close-time" required>
+
+            <div class="list-container" id="break-list">
+                <h3>Break Times</h3>
+                <div class="list-item">
+                    <label style="font-weight: bold;">Break Time Range</label>
+                    <input type="time" class="break-from" placeholder="From">
+                    <input type="time" class="break-to" placeholder="To">
+                    <button class="btn" onclick="removeListItem(this)">Remove</button>
+                </div>
+            </div>
+            <button class="btn" onclick="addBreakTime()">Add Break Time</button>
+
+            
+            <label style="font-weight: bold;" for="reg-service-all_Discounting">Enter All Service Discounting Price</label>
+            <label for="reg-service-all_Discounting">Ye number (-) hoga Service Discounted Price - This Number se hoga</label>
+            <input type="number" id="reg-service-all_Discounting" placeholder="Discounting Price">
+
+
+            <div class="list-container" id="service-list">
+                <h3>Services</h3>
+                <div class="list-item">
+                    <label style="font-weight: bold;">Service Details</label>
+                    <input type="text" class="service-name" placeholder="Service Name">
+                    <input type="number" class="service-price" placeholder="Price (PKR)">
+                    <input type="number" class="service-discounted-price" placeholder="Discounted Price (PKR)">
+                    <input type="number" class="service-time" placeholder="Time (min)">
+                    <button class="btn" onclick="removeListItem(this)">Remove</button>
+                </div>
+            </div>
+            <button class="btn" onclick="addService()">Add Service</button>
+            <label style="font-weight: bold;" for="reg-owner-image">Owner Image</label>
+            <input type="file" id="reg-owner-image" accept="image/*">
+            <label style="font-weight: bold;" for="reg-salon-image">Salon Images</label>
+            <input type="file" id="reg-salon-image" accept="image/*" multiple>
+            <button class="btn" onclick="registerSalon()">Register</button>
+            <button class="btn" onclick="showForm('salon-login')">Back to Login</button>
+            <button class="btn" onclick="showSection('home')">Back to Home</button>
+        </div>
+        <div id="salon-settings" class="form-container" style="display: none;">
+            <h2>Edit Salon Settings</h2>
+            <p id="settings-error" class="message"></p>
+            <label style="font-weight: bold;" for="set-owner-name">Owner Name</label>
+            <input type="text" id="set-owner-name" placeholder="Owner Name" required>
+            <label style="font-weight: bold;" for="set-owner-number">Owner Number</label>
+            <input type="tel" id="set-owner-number" placeholder="Owner Number" required>
+            <label style="font-weight: bold;" for="set-salon-name">Salon Name</label>
+            <input type="text" id="set-salon-name" placeholder="Salon Name" required>
+            <label style="font-weight: bold;" for="set-password">Password</label>
+            <input type="password" id="set-password" placeholder="Password" required>
+            <label style="font-weight: bold;" for="set-location">Location</label>
+            <input type="text" id="set-location" placeholder="Location" required>
+
+            <label style="font-weight: bold;" for="set-seatCount">Seats Available</label>
+            <input type="number" id="set-seatCount" placeholder="Seats Available" required>
+
+            <label style="font-weight: bold;" for="set-open-time">Opening Time</label>
+            <input type="time" id="set-open-time" required>
+            <label style="font-weight: bold;" for="set-close-time">Closing Time</label>
+            <input type="time" id="set-close-time" required>
+            <div class="list-container" id="set-break-list">
+                <h3>Break Times</h3>
+                <div class="list-item">
+                    <label style="font-weight: bold;">Break Time Range</label>
+                    <input type="time" class="break-from" placeholder="From">
+                    <input type="time" class="break-to" placeholder="To">
+                    <button class="btn" onclick="removeListItem(this)">Remove</button>
+                </div>
+            </div>
+            <button class="btn" onclick="addBreakTime('set-break-list')">Add Break Time</button>
+
+            
+            <label style="font-weight: bold;" for="set-service-all_Discounting">Enter All Service Discounting Price</label>
+            <label for="set-service-all_Discounting">Ye number (-) hoga Service Discounted Price - This Number se hoga</label>
+            <input type="number" id="set-service-all_Discounting" placeholder="Discounting Price">
+
+
+            <div class="list-container" id="set-service-list">
+                <h3>Services</h3>
+                <div class="list-item">
+                    <label style="font-weight: bold;">Service Details</label>
+                    <input type="text" class="service-name" placeholder="Service Name">
+                    <input type="number" class="service-price" placeholder="Price (PKR)">
+                    <input type="number" class="service-discounted-price" placeholder="Discounted Price (PKR)">
+                    <input type="number" class="service-time" placeholder="Time (min)">
+                    <button class="btn" onclick="removeListItem(this)">Remove</button>
+                </div>
+            </div>
+            <button class="btn" onclick="addService('set-service-list')">Add Service</button>
+            <label for="set-owner-image">Owner Image</label>
+            <input type="file" id="set-owner-image" accept="image/*">
+            <label for="set-salon-image">Salon Images</label>
+            <input type="file" id="set-salon-image" accept="image/*" multiple>
+            <button class="btn" onclick="saveSettings()">Save</button>
+            <button class="btn" onclick="showForm('salon-dashboard')">Back to Dashboard</button>
+            <button class="btn" onclick="showSection('home')">Back to Home</button>
+        </div>
+        <div id="salon-dashboard" class="form-container" style="display: none;">
+            <div class="dashboard">
+                <h2>Your Salon Dashboard</h2>
+                <div class="dashboard-grid">
+                    <div class="salon-card">
+                        
+                        <div class="slider" data-slider-id="dash-salon">
+                            <div class="slides" id="dash-slide-images">
+                                <!-- <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c')"></div> -->
+                            </div>
+                            <button class="slider-btn prev" onclick="moveSlide('dash-salon', -1)">❮</button>
+                            <button class="slider-btn next" onclick="moveSlide('dash-salon', 1)">❯</button>
+                        </div>
+                        <div class="details">
+                            <p><strong>Salon Name:</strong> <span id="dash-salon-name">Salon Name</span></p>
+                            <p><strong>Owner:</strong> <span id="dash-owner-name">Owner: </span></p>
+                            <p><strong>Owner Number:</strong> <span id="dash-owner-number">Owner Number: </span></p>
+                            <p class="location"><strong>Location:</strong> <span id="dash-location"><a href="https://www.google.com/maps/search/?api=1&query=Location" target="_blank">Location</a></span></p>
+                            <p><strong>Opened Time:</strong> <span id="dash-hours">Hours: </span></p>
+                            <p><strong>Breaks:</strong> <span id="dash-breaks">Breaks: </span></p>
+                            <p><strong>Services:</strong> <span id="dash-services">Services: </span></p>
+                            <p><strong>Whole Services Discounting:</strong> <span id="dash-wholeDiscounting-services">Whole Services Discounting: </span></p>
+                        </div>
+                    </div>
+                    <div class="salon-card">
+                        <h3>Booking Stats</h3>
+                        <div class="details">
+                            <p><strong>Total Bookings Pending:</strong> <span id="pending-bookings">0</span></p>
+                            <p><strong>Canceled Bookings:</strong> <span id="canceled-bookings">0</span></p>
+                            <p><strong>Total Bookings:</strong> <span id="total-bookings">0</span></p>
+                            <br>
+                            <p><strong>Completed Bookings:</strong> <span id="completed-bookings">0</span></p>
+                            <p style="padding-left: 10px;"><strong>By Web Bookings:</strong> <span id="online-bookings">0</span></p>
+                            <p style="padding-left: 10px;"><strong>Manual Bookings:</strong> <span id="manual-bookings">0</span></p>
+                        </div>
+                    </div>
+                </div>
+                <p id="dashboard-error" class="message"></p>
+                <div style="text-align: center; margin: 20px;">
+                    <!-- <button class="btn" onclick="Complete_Currect_Customer()">Complete Current Custome</button>
+                    <button class="btn" onclick="Cancel_Currect_Customer()">Cancel Current Customer</button> -->
+                    <button class="btn" onclick="cancelAllBookings()">Cancel All Bookings</button>
+                    <button class="btn" onclick="completeAllBookings()">Set Complete All Bookings</button>
+                    <br>
+                    <br>
+                    <button class="btn" onclick="cancelBeforeAllBookings()">Cancel All Past Bookings</button>
+                    <button class="btn" onclick="completeBeforeAllBookings()">Set Complete All Past Bookings</button>
+                    <br>
+                    <br>
+                    <button class="btn" onclick="showForm('salon-settings')">Settings</button>
+                    <button class="btn" onclick="showSection('home')">Home</button>
+                </div>
+                <div class="form-container">
+                    <h3>Manual Booking:</h3>
+                    <label for="manualBooking-timeTake">please agar kisi ki booking ho to kisi or ko nahi bulaye ga</p>
+                        
+                        
+                    <label for="manualBooking-timeTake"><strong>Time to done</strong>:</label>
+                    <!-- <input type="number" id="manualBooking-timeTake" placeholder="Time to Done Work in Minutes" required> -->
+                    <select id="manualBooking-timeTake" required>
+                    
+                    </select>    
+                    <label><strong>Agar ap Time ko select nahi kare gai to Current Time check keya jaye ga</strong>:</label>
+                    <select id="manual-booking-time" required>
+                    
+                    </select>
+                    
+                    <p id="manual-dashboard-error" class="message"></p>
+                    <button class="btn" onclick="manualBook()">Manual Book Customer</button>
+                </div>
+
+                <h2>Pending Bookings</h2>
+                <div id="pending-bookings-grid" class="dashboard-grid" style="box-shadow: 0px 0px 5px 2px rgb(255, 255, 255);"></div>
+                <br>
+                <h2>Completed Bookings</h2>
+                <div id="completed-bookings-grid" class="dashboard-grid" style="box-shadow: 0px 0px 5px 2px rgb(0, 255, 13);"></div>
+                <br>
+
+                <h2>Canceled Bookings</h2>
+                <div id="canceled-bookings-grid" class="dashboard-grid" style="box-shadow: 0px 0px 5px 2px rgba(255, 0, 0, 1);"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Salon Booking Section -->
+    <div id="user-booking" class="section">
+        <div style="height: 52px;"></div>
+        <div class="form-container">
+            <h2>Book Your Appointment</h2>
+            <h2 id="booking-salon-name"></h2>
+            <p style="font-size: 90%; text-align: left;" id="booking-owner-name"></p>
+            <p style="font-size: 90%; text-align: left;" id="booking-salon-openedTime"></p> 
+            <p id="booking-owner-number" class=" " , style="font-size: 85%; text-align: left;"> </p>
+            <p id="booking-location" class=" " , style="font-size: 85%; text-align: left;"> <a style="font-size: 85%;" href="https://www.google.com/maps/search/?api=1&query=Location" target="_blank"></a></p>
+            <div style="height: 10px;"></div>
+            <div class="slider" data-slider-id="booking-salon">
+                <div class="slides" id="user-booking-images-slider">
+                    <!-- <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1521498542256-5aea2ebb8090')"></div> -->
+                </div>
+                <button class="slider-btn prev" onclick="moveSlide('booking-salon', -1)">❮</button>
+                <button class="slider-btn next" onclick="moveSlide('booking-salon', 1)">❯</button>
+            </div>
+            <h3 style="height: 33%; text-align: center; padding-top: 0px; background-color:rgb(255, 255, 255); border-radius: 4px; font-size: 90%; color:rgb(255, 69, 69);" id="booking-salon-discounts"></h3>
+            <hr style="margin-top: 10px; margin-bottom: 70px;">
+            <label style=" font-weight: bold;" for="customer-name">Customer Name</label>
+            <input type="text" id="customer-name" placeholder="Customer Name">
+            <div style="height: 2px;"> </div>
+            <label style="font-weight: bold; margin-bottom: -4px;" for="customer-number">Customer Number</label>
+            <label style="font-weight: bold; margin-bottom: -1px;" for="customer-number">(for Notify any emergency cancel or others)</label>
+            <input type="tel" id="customer-number" placeholder="Customer Number">
+            <div style="height: 2px;"> </div>
+            <label style="font-weight: bold;" for="booking-service">Select Service</label>
+            <select id="booking-service" required>
+                <option value="">Select Service</option>
+            </select>
+            <div style="height: 2px;"> </div>
+            <label style="font-weight: bold;" for="booking-time">Select Time</label>
+            <select id="booking-time" required>
+                
+            </select>
+            <div style="height: 2px;"> </div>
+            <!-- <label for="customer-image">Your Image</label>
+            <input type="file" id="customer-image" accept="image/*"> -->
+            <p id="booking-error" class="message"></p>
+            <button class="btn" onclick="bookAppointment()">Book</button>
+            <button class="btn" onclick="showSection('home')">Back to Home</button>
+        </div>
+    </div>
+
+    <!-- Your Booked Salon Section -->
+    <div id="your-booked-salon" class="section">
+        <div style="height: 52px;"></div>
+        <div class="form-container">
+        <h2>Your Booked Salons</h2>
+        <p style="text-align: left; font-size: 80%; font: 600;">Agar apka koi Booking nahi Show ho ra to iske 3 matlab hote hai</p>
+        <p style="text-align: left; font-size: 80%; font: 600;">1.Apne Cancel Keya ho</p>
+        <p style="text-align: left; font-size: 80%; font: 600;">2.Complete hogaya ho</p>
+        <p style="text-align: left; font-size: 80%; font: 600;">3.Salon Owner ne Cancel Keya ho</p>
+        <p style="text-align: left; font-size: 80%; font: 600;">4.Koi or Booked kar deya ho</p>
+        <p style="text-align: left; font-size: 80%; font: 600;">Note: Agar koi bhi masla hoto Salon Owner Ko Call keye</p>
+        <hr>
+        <br>
+        <p id="your_booking-error" class="message"></p>
+        
+        <div class="bookings-grid" id="bookings-grid"></div>
+        <div style="text-align: center; margin: 20px;">
+            <button class="btn" onclick="showSection('home')">Book Another Salon</button>
+        </div>
+        </div>
+    </div>
+
+    <!-- No Booking Section -->
+    <div id="no-booking" class="section">
+        <div style="height: 52px;"></div>
+        <div class="no-booking">
+            <h2 style="padding-left: 15PX;">No Bookings Found</h2>
+            <p>Book a salon now to get started!</p>
+            <br>
+            <hr>
+            <p style="text-align: left; font-size: 80%; font: 600;">Agar apka koi Booking nahi Show ho ra to iske 3 matlab hote hai</p>
+            <p style="text-align: left; font-size: 80%; font: 600;">1.Apne Cancel Keya ho</p>
+            <p style="text-align: left; font-size: 80%; font: 600;">2.Complete hogaya ho</p>
+            <p style="text-align: left; font-size: 80%; font: 600;">3.Salon Owner ne Cancel Keya ho</p>
+            <p style="text-align: left; font-size: 80%; font: 600;">4.Koi or Booked kar deya ho</p>
+            <p style="text-align: left; font-size: 80%; font: 600;">Note: Agar koi bhi masla hoto Salon Owner Ko Call keye</p>
+            <hr>
+            <br>
+            <div class="form-container">
+                <button class="btn" onclick="showSection('home')">Back to Home</button>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <footer style="box-shadow: -1px 0px 10px rgba(0, 0, 0, 0.2);">
+        <br>
+        <p>CEO: Shayan Shahid - email: <a style="color: aqua;" href="https://mail.google.com/mail/?view=cm&to=shayanwork123@gmail.com&su=My name is &body=Mujhe Madad Chaye ke " target="_blank">
+            shayanwork123@gmail.com</a></p>
+        <hr>
+        <p>Manager: Areeb Malick - email: <a style="color: aqua;" href="https://mail.google.com/mail/?view=cm&to=areebmalick36@gmail.com@gmail.com&su=My name is &body=Mujhe Madad Chaye ke " target="_blank">
+            shayanwork123@gmail.com</a></p>
+    </footer>
+
+    <!-- <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script> -->
+    <!-- <script src="scripts_backup.js"></script> -->
+     
+    <!-- <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script> -->
+
+    <!-- <script src="firebase-logic-backend.js"></script> -->
+    <script src="scripts_new_backend.js"></script>
+    <script>
+(function(){
+    function c(){
+        var b = a.contentDocument || a.contentWindow.document;
+        if (b) {
+            var d = b.createElement('script');
+            d.innerHTML = `
+                window.__CF$cv$params = {
+                    r: '9439e95bd8d62490',
+                    t: 'MTc0Nzg5MTcyMS4wMDAwMDA='
+                };
+                // Removed external script src to avoid 404 error
+                // var a = document.createElement('script');
+                // a.nonce = '';
+                // a.src = '/cdn-cgi/challenge-platform/scripts/jsd/main.js';
+                // document.getElementsByTagName('head')[0].appendChild(a);
+            `;
+            b.getElementsByTagName('head')[0].appendChild(d);
+        }
+    }
+
+    if (document.body) {
+        var a = document.createElement('iframe');
+        a.height = 1;
+        a.width = 1;
+        a.style.position = 'absolute';
+        a.style.top = 0;
+        a.style.left = 0;
+        a.style.border = 'none';
+        a.style.visibility = 'hidden';
+        document.body.appendChild(a);
+
+        if ('loading' !== document.readyState) {
+            c();
+        } else if (window.addEventListener) {
+            document.addEventListener('DOMContentLoaded', c);
+        } else {
+            var e = document.onreadystatechange || function(){};
+            document.onreadystatechange = function(b){
+                e(b);
+                if ('loading' !== document.readyState) {
+                    document.onreadystatechange = e;
+                    c();
+                }
+            };
+        }
+    }
+})();
+</script>
+</html>
