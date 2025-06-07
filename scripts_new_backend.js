@@ -534,8 +534,9 @@ async function showDashboard() {
         // Start 10-second auto-reload for dashboard if logged in
         if (!dashboardReloadInterval) {
             dashboardReloadInterval = setInterval(async () => {
-                if (salon_Index >= 0 && salons[salon_Index] && document.getElementById('your-salon').classList.contains('active')) {
+                if (salon_Index >= 0 && document.getElementById('your-salon').classList.contains('active')) {
                     shouldScrollOnDashboard = false; // Prevent scroll on auto-reload
+                    console.log("1111");
                     await GetYourSalon();
 
                     // Update dashboard data only
@@ -572,7 +573,7 @@ async function showDashboard() {
                     renderBookings(completed, 'completed-bookings-grid' , false);
                     renderBookings(canceled, 'canceled-bookings-grid' , false);
                 }
-            }, 10000);
+            }, 5000);
         }
 
         // Scroll to top only if manually navigated
@@ -595,7 +596,6 @@ async function showDashboard() {
         targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' , inline: 'center'});
     }
 }
-
 function showForm(formId) {
     const forms = ['salon-loading' , 'salon-login', 'salon-register', 'salon-dashboard', 'salon-settings'];
     forms.forEach(id => {
