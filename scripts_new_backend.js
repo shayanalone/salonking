@@ -1283,7 +1283,7 @@ async function renderUserBookings(bookings) {
                     <button class="slider-btn next" onclick="moveSlide('${sliderId}', 1)">❯</button>
                 </div>
                 <p style="padding-left: 0.43rem; font-size: 85%;"><strong>Owner:</strong> ${salon.ownerName}</p>
-                <p style="padding-left: 0.43rem; font-size: 85%;"><strong>Owner Number> ${salon.ownerNumber}</p>
+                <p style="padding-left: 0.43rem; font-size: 85%;"><strong>Owner Number</strong> ${salon.ownerNumber}</p>
                 <p style="padding-left: 0.43rem; font-size: 85%;"><strong>Location:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salon.location)}" target="_blank" style="font-size: 90%;  color: rgb(0, 157, 255);">${salon.location}</a></p>
                 <hr>
                 <br>
