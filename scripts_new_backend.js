@@ -1079,8 +1079,11 @@ async function saveSettings() {
             headers: {
                 'Content-Type': 'application/json'
             },
+            
             body: JSON.stringify({ 
-                "salonPassword": salon_password , "salonIndex": salon_Index , "salonIndex": salon_Index,
+                "old_salonName": localStorage.getItem('salon_name') ,
+                "old_salonPassword": localStorage.getItem('salon_password') , 
+                "salonIndex": localStorage.getItem('salon_Index'),
                 ownerName,
                 ownerNumber,
                 salonName,
