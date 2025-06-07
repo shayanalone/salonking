@@ -398,7 +398,6 @@ async function GetYourSalon() {
 
     if (salon_Index < 0) {
         your_salon = null;
-        salon_Index = -1;
         localStorage.setItem('salon_Index', salon_Index);
     }else{
         const Signal = currentAbortController.signal;
@@ -480,7 +479,7 @@ async function showDashboard() {
         if (dashServices) dashServices.textContent = your_salon.services?.length > 0 ? your_salon.services.map(s => s.name).join(', ') : 'None';
         if (dashWholeDiscountingServices) dashWholeDiscountingServices.textContent = your_salon.WholeServiceDiscounting + " rupee" || 'N/A';
         
-        const salonBooking = await GetSalonBooking(your_salon.salonName , salon_password , salon_Index , signal);
+        const salonBooking = await GetSalonBooking(your_salon.salonId , your_salon.salonName , salon_password , salon_Index , signal) || [];
         
         const pending = salonBooking.filter(b => b.status === 'pending');
         const completed = salonBooking.filter(b => b.status === 'completed');
@@ -548,7 +547,7 @@ async function showDashboard() {
                     if (dashBreaks) dashBreaks.textContent = your_salon.breaks?.length > 0 ? your_salon.breaks.map(b => `${b.from} - ${b.to}`).join(', ') : 'None';
                     if (dashServices) dashServices.textContent = your_salon.services?.length > 0 ? your_salon.services.map(s => s.name).join(', ') : 'None';
 
-                    const salonBooking = await GetSalonBooking(your_salon.salonName , salon_password , salon_Index , signal);
+                    const salonBooking = await GetSalonBooking(your_salon.salonId , your_salon.salonName , salon_password , salon_Index , signal) || [];
                     
                     const pending = salonBooking.filter(b => b.status === 'pending');
                     const completed = salonBooking.filter(b => b.status === 'completed');
@@ -1108,9 +1107,9 @@ async function saveSettings() {
             throw new Error(result.error);
         }
         if(result.status == "success"){
-            your_salon = result.salon;
             localStorage.setItem('salon_name' , salonName);
             localStorage.setItem('salon_password' , password);
+            GetLocalDatas();
             setError('settings-error', 'Settings saved successfully!' , true);
             showDashboard();
         }else{
@@ -1233,22 +1232,23 @@ async function renderUserBookings(bookings) {
         clearLoading(); 
         grid.innerHTML = '';
         const groupedBookings = userBookings.reduce((acc, booking) => {
-            if (!acc[booking.salonName]) {
-                acc[booking.salonName] = {
+            if (!acc[booking.salonId]) {
+                acc[booking.salonId] = {
                     ownerName: booking.ownerName,
                     location: booking.location,
                     bookings: []
                 };
             }
-            acc[booking.salonName].bookings.push(booking);
+            acc[booking.salonId].bookings.push(booking);
             return acc;
         }, {});
-        Object.keys(groupedBookings).forEach((salonName, index) => {
-            const { ownerName, location, bookings: salonBookings } = groupedBookings[salonName];
-            const sliderId = `booked-salon-${salonName}-${index}`;
+        Object.keys(groupedBookings).forEach((salonId, index) => {
+            const { ownerName, location, bookings: salonBookings } = groupedBookings[salonId];
+            const sliderId = `booked-salon-${salonId}-${index}`;
             const card = document.createElement('div');
-            // Assuming salons is an array of objects and salonName is the name you're searching for
-            const salonImages = salons.find(salon => salon.salonName === salonName).salonImages;
+            // Assuming salons is an array of objects and salonId is the name you're searching for
+            let salon = salons.find(s => s.salonId == salonId)
+            const salonImages = salon.salonImages;
 
             card.className = 'booking-card';
             const bookingDetails = salonBookings.map((booking, idx) =>  `
@@ -1272,7 +1272,7 @@ async function renderUserBookings(bookings) {
             // <p style="padding-left: 0.4rem; text-align: left; font-size: large; text-shadow: #111827;">${salonBookings.length > 1 ? '<strong>Bookings in: </strong>' : ''}</p>
             card.innerHTML = `
                 <div style="margin-top: 7px; margin-bottom: 5px;"> </div?
-                <p><b style="padding-left: 0.43rem; text-align: left; font-size: large; text-shadow: #111827;">${salonName}</b></p>
+                <p><b style="padding-left: 0.43rem; text-align: left; font-size: large; text-shadow: #111827;">${salon.salonName}</b></p>
                 <div class="slider" data-slider-id="${sliderId}">
                     <div class="slides" id="${sliderId}">
                         <div class="slide" style="background-image: url('${placeholderImage}')"></div>
@@ -1282,8 +1282,9 @@ async function renderUserBookings(bookings) {
                     <button class="slider-btn prev" onclick="moveSlide('${sliderId}', -1)">❮</button>
                     <button class="slider-btn next" onclick="moveSlide('${sliderId}', 1)">❯</button>
                 </div>
-                <p style="padding-left: 0.43rem; font-size: 85%;"><strong>Owner:</strong> ${ownerName}</p>
-                <p style="padding-left: 0.43rem; font-size: 85%;"><strong>Location:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}" target="_blank" style="font-size: 90%;  color: rgb(0, 157, 255);">${location}</a></p>
+                <p style="padding-left: 0.43rem; font-size: 85%;"><strong>Owner:</strong> ${salon.ownerName}</p>
+                <p style="padding-left: 0.43rem; font-size: 85%;"><strong>Owner Number> ${salon.ownerNumber}</p>
+                <p style="padding-left: 0.43rem; font-size: 85%;"><strong>Location:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salon.location)}" target="_blank" style="font-size: 90%;  color: rgb(0, 157, 255);">${salon.location}</a></p>
                 <hr>
                 <br>
                 ${bookingDetails}
@@ -1362,7 +1363,7 @@ async function dash_cancelBooking(code) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ "salonName": your_salon.salonName , "salonPassword": salon_password , "salonIndex": salon_Index , code }),
+            body: JSON.stringify({ "salonId": your_salon.salonId , "salonName": your_salon.salonName , "salonPassword": salon_password , "salonIndex": salon_Index , code }),
             signal
         });
         const result = await response.json();
@@ -1403,7 +1404,7 @@ async function dash_Complete_Customer(code) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ "salonName": your_salon.salonName , "salonPassword": salon_password , "salonIndex": salon_Index , "code": code }),
+            body: JSON.stringify({  "salonId": your_salon.salonId , "salonName": your_salon.salonName , "salonPassword": salon_password , "salonIndex": salon_Index , "code": code }),
             signal
         });
         const result = await response.json();
@@ -1444,7 +1445,7 @@ async function cancelAllBookings() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ "salonName": your_salon.salonName , "salonPassword": salon_password , "salonIndex": salon_Index }),
+            body: JSON.stringify({  "salonId": your_salon.salonId , "salonName": your_salon.salonName , "salonPassword": salon_password , "salonIndex": salon_Index }),
             signal
         });
         const result = await response.json();
@@ -1485,7 +1486,7 @@ async function completeAllBookings() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ "salonName": your_salon.salonName , "salonPassword": salon_password , "salonIndex": salon_Index}),
+            body: JSON.stringify({  "salonId": your_salon.salonId , "salonName": your_salon.salonName , "salonPassword": salon_password , "salonIndex": salon_Index}),
             signal
         });
         const result = await response.json();
@@ -1527,7 +1528,7 @@ async function cancelBeforeAllBookings() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ "salonName": your_salon.salonName , "salonPassword": salon_password , "salonIndex": salon_Index }),
+            body: JSON.stringify({  "salonId": your_salon.salonId , "salonName": your_salon.salonName , "salonPassword": salon_password , "salonIndex": salon_Index }),
             signal
         });
         const result = await response.json();
@@ -1568,7 +1569,7 @@ async function completeBeforeAllBookings() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ "salonName": your_salon.salonName , "salonPassword": salon_password , "salonIndex": salon_Index }),
+            body: JSON.stringify({ "salonId": your_salon.salonId ,  "salonName": your_salon.salonName , "salonPassword": salon_password , "salonIndex": salon_Index }),
             signal
         });
         const result = await response.json();
@@ -1653,7 +1654,7 @@ async function Init_UserBooking_Times() {
     const buffer_minute = 5;
     let salon = null;
     let user_choice_service = 0;
-
+    
     // Find salon and service duration
     for (let _salon of salons) {
         if (_salon.salonName === _salonName) {
@@ -1696,7 +1697,7 @@ async function Init_UserBooking_Times() {
         startMinutes = Math.ceil(startMinutes / round_minutes) * round_minutes; // Rounds 12:27 PM to 12:30 PM
 
         const breaks = salon.breaks || [];
-        const bookings = await getSpecialSalonBookingData(_salonName, { signal }) || [];
+        const bookings = await getSpecialSalonBookingData(salon.salonId , _salonName, { signal }) || [];
 
         let hasAvailableSlots = false;
 
@@ -1810,7 +1811,7 @@ async function Init_ManualBooking_Times() {
         startMinutes = Math.ceil(startMinutes / round_minutes) * round_minutes; // Rounds 12:27 PM to 12:30 PM
 
         const breaks = your_salon.breaks || [];
-        const bookings = await getSpecialSalonBookingData(your_salon.salonName, { signal }) || [];
+        const bookings = await getSpecialSalonBookingData(your_salon.salonId , your_salon.salonName, { signal }) || [];
 
         let hasAvailableSlots = false;
 
@@ -1947,7 +1948,7 @@ async function bookAppointment() {
     }
 
     const breaks = salon.breaks || [];
-    let bookings = await getSpecialSalonBookingData(_salonName) || [];
+    let bookings = await getSpecialSalonBookingData(salon.salonId , _salonName) || [];
     const r = checkTimeSlotAvailability(salon , bookings , breaks , time.substring(0 , time.indexOf('s')) , time_take);
     if(r != "1"){
         setError("booking-error" , 'Failed: '+r);
@@ -1963,9 +1964,10 @@ async function bookAppointment() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({  "salonName": _salonName,
-                                    "ownerName": document.getElementById('booking-owner-name')?.textContent.replace('"Owner": ', '') || '',
-                                    "location": document.getElementById('booking-location')?.textContent || '',
+            body: JSON.stringify({ "salonId": salon.salonId , 
+                                    // "salonName": _salonName,
+                                    // "ownerName": document.getElementById('booking-owner-name')?.textContent.replace('"Owner": ', '') || '',
+                                    // "location": document.getElementById('booking-location')?.textContent || '',
                                     "deviceId": localStorage.getItem("Device_Id") || '',
                                     service ,
                                     price ,
@@ -2034,7 +2036,7 @@ async function manualBook() {
         _time = timeStr + "s" + (1);
     }
     const breaks = your_salon.breaks || [];
-    const bookings = await getSpecialSalonBookingData(your_salon.salonName) || [];
+    const bookings = await getSpecialSalonBookingData(your_salon.salonId , your_salon.salonName) || [];
     const r = checkTimeSlotAvailability(your_salon , bookings , breaks , _time.substring(0 , _time.indexOf('s')) , user_choice_service);
     if(r != "1"){
         setError("manual-dashboard-error" , 'Failed: '+r);
@@ -2050,7 +2052,7 @@ async function manualBook() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({  "salonName": your_salon.salonName,
+            body: JSON.stringify({ "salonId": your_salon.salonId , "salonName": your_salon.salonName,
                                     "ownerName": your_salon.ownerName,
                                     "location": your_salon.location,
                                     "deviceId": 'manual',
@@ -2234,7 +2236,7 @@ async function GetUserBooking(deviceId, options = {}) {
     }
 }
 
-async function GetSalonBooking(salonName , salon_password , salon_Index, options = {}) {
+async function GetSalonBooking(salonId , salonName , salon_password , salon_Index, options = {}) {
     try {
         const { signal } = options;
         const response = await fetch(`${BASE_URL}/getSalonBookings`, {
@@ -2242,7 +2244,7 @@ async function GetSalonBooking(salonName , salon_password , salon_Index, options
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ salonName  , "salonPassword": salon_password , "salonIndex": salon_Index }),
+            body: JSON.stringify({ "salonId": salonId , salonName  , "salonPassword": salon_password , "salonIndex": salon_Index }),
             signal
         });
         const result = await response.json();
@@ -2269,7 +2271,7 @@ async function GetSalonBooking(salonName , salon_password , salon_Index, options
         throw error;
     }
 }
-async function getSpecialSalonBookingData(salonName, options = {}) {
+async function getSpecialSalonBookingData(salonId , salonName, options = {}) {
     try {
         const { signal } = options;
         const response = await fetch(`${BASE_URL}/getOnlyTime_SalonBookings`, {
@@ -2277,7 +2279,7 @@ async function getSpecialSalonBookingData(salonName, options = {}) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ salonName }),
+            body: JSON.stringify({ salonId , salonName }),
             signal
         });
         const result = await response.json();
