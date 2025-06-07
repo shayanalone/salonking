@@ -771,12 +771,13 @@ function clearError(errorId) {
 }
 
 // Set error or success message for a given error element ID
-function setError(errorId, message) {
+function setError(errorId, message , isSuccessMessage = false) {
     // Determine message type based on content (heuristic for backward compatibility)
-    const isSuccess = message.toLowerCase().includes('success') || 
-                     message.toLowerCase().includes('confirmed') || 
-                     message.toLowerCase().includes('completed') || 
-                     message.toLowerCase().includes('canceled');
+    const isSuccess = isSuccessMessage ||
+                      message.toLowerCase().includes('success') || 
+                      message.toLowerCase().includes('confirmed') || 
+                      message.toLowerCase().includes('completed') || 
+                      message.toLowerCase().includes('canceled');
     displayMessage(errorId, message, isSuccess ? 'success' : 'error');
 }
 
@@ -790,7 +791,7 @@ async function loginSalon() {
         return;
     }
     
-    setError('login-error', 'Processing...');
+    setError('login-error', 'Processing...' , true);
     const Signal = currentAbortController.signal;
     try {
         const { signal } = Signal;
@@ -813,7 +814,7 @@ async function loginSalon() {
             localStorage.setItem('salon_Index', salon_Index);
             localStorage.setItem('salon_name' , salonName);
             localStorage.setItem('salon_password' , password);
-            setError('login-error', 'Loged.');
+            setError('login-error', 'Loged.' , true);
             showDashboard();
         } else {
             salon_Index = -1;
@@ -930,7 +931,7 @@ async function registerSalon() {
             localStorage.setItem('salon_name' , salonName);
             localStorage.setItem('salon_password' , password);
 
-            setError('register-error', 'Salon registered successfully!');
+            setError('register-error', 'Salon registered successfully!' , true);
             showDashboard();
         }else{
             setError('register-error', status);
@@ -1096,7 +1097,7 @@ async function saveSettings() {
         }
         if(result.status == "success"){
             your_salon = result.salon;
-            setError('settings-error', 'Settings saved successfully!');
+            setError('settings-error', 'Settings saved successfully!' , true);
             showDashboard();
         }else{
             setError('settings-error', result.status);
@@ -1296,7 +1297,7 @@ async function renderUserBookings(bookings) {
 // Cancel Booking as User
 async function cancelBooking(code) {
     clearError('your_booking-error');
-    setError('your_booking-error', 'Canceling booking...');
+    setError('your_booking-error', 'Canceling booking...' , true);
     
     const Signal = currentAbortController.signal;
     try {
@@ -1315,7 +1316,7 @@ async function cancelBooking(code) {
         }
         
         if (result.status == "success") {
-            setError('your_booking-error', 'Booking canceled successfully.');
+            setError('your_booking-error', 'Booking canceled successfully.' , true);
             showSection('your-booked-salon');
         } else {
             setError('your_booking-error', result.status);
@@ -1332,7 +1333,7 @@ async function cancelBooking(code) {
 }
 async function dash_cancelBooking(code) {
     clearError('dashboard-error');
-    setError('dashboard-error', 'Canceling booking...');
+    setError('dashboard-error', 'Canceling booking...' , true);
     const salon_Index = parseInt(localStorage.getItem('salon_Index')) || -1;
     if (salon_Index < 0) {
         setError('dashboard-error', 'Please log in to manage bookings.');
@@ -1356,7 +1357,7 @@ async function dash_cancelBooking(code) {
         }
         
         if (result.status == "success") {
-            setError('dashboard-error', 'Set to Canceled.');
+            setError('dashboard-error', 'Set to Canceled.' , true);
             showDashboard();
         } else {
             setError('dashboard-error', result.status);
@@ -1373,7 +1374,7 @@ async function dash_cancelBooking(code) {
 }
 async function dash_Complete_Customer(code) {
     clearError('dashboard-error');
-    setError('dashboard-error', 'Completing booking...');
+    setError('dashboard-error', 'Completing booking...' , true);
     const salon_Index = parseInt(localStorage.getItem('salon_Index')) || -1;
     if (salon_Index < 0) {
         setError('dashboard-error', 'Please log in to manage bookings.');
@@ -1397,7 +1398,7 @@ async function dash_Complete_Customer(code) {
         }
         
         if (result.status == "success") {
-            setError('dashboard-error', 'Set to Completed.');
+            setError('dashboard-error', 'Set to Completed.' , true);
             showDashboard();
         } else {
             setError('dashboard-error', result.status);
@@ -1419,7 +1420,7 @@ async function cancelAllBookings() {
         setError('dashboard-error', 'Please log in to manage bookings.');
         return;
     }
-    setError('dashboard-error', 'Canceling booking...');
+    setError('dashboard-error', 'Canceling booking...' , true);
     
     const Signal = currentAbortController.signal;
     try {
@@ -1438,7 +1439,7 @@ async function cancelAllBookings() {
         }
         
         if (result.status == "success") {
-            setError('dashboard-error', 'Canceled all '+result.count+` Bookings.`);
+            setError('dashboard-error', 'Canceled all '+result.count+` Bookings.` , true);
             showDashboard();
         } else {
             setError('dashboard-error', result.status);
@@ -1460,7 +1461,7 @@ async function completeAllBookings() {
         setError('dashboard-error', 'Please log in to manage bookings.');
         return;
     }
-    setError('dashboard-error', 'Completing booking...');
+    setError('dashboard-error', 'Completing booking...' , true);
     
     const Signal = currentAbortController.signal;
     try {
@@ -1479,7 +1480,7 @@ async function completeAllBookings() {
         }
         
         if (result.status == "success") {
-            setError('dashboard-error', 'Set '+result.count+` Bookings to Complete`);
+            setError('dashboard-error', 'Set '+result.count+` Bookings to Complete` , true);
             showDashboard();
         } else {
             setError('dashboard-error', result.status);
@@ -1502,7 +1503,7 @@ async function cancelBeforeAllBookings() {
         setError('dashboard-error', 'Please log in to manage bookings.');
         return;
     }
-    setError('dashboard-error', 'Canceling booking...');
+    setError('dashboard-error', 'Canceling booking...' , true);
     
     const Signal = currentAbortController.signal;
     try {
@@ -1521,7 +1522,7 @@ async function cancelBeforeAllBookings() {
         }
         
         if (result.status == "success") {
-            setError('dashboard-error', 'Canceled all '+result.count+` Bookings.`);
+            setError('dashboard-error', 'Canceled all '+result.count+` Bookings.` , true);
             showDashboard();
         } else {
             setError('dashboard-error', result.status);
@@ -1543,7 +1544,7 @@ async function completeBeforeAllBookings() {
         setError('dashboard-error', 'Please log in to manage bookings.');
         return;
     }
-    setError('dashboard-error', 'Completing booking...');
+    setError('dashboard-error', 'Completing booking...' , true);
     
     const Signal = currentAbortController.signal;
     try {
@@ -1562,7 +1563,7 @@ async function completeBeforeAllBookings() {
         }
         
         if (result.status == "success") {
-            setError('dashboard-error', 'Set '+result.count+` Bookings to Complete`);
+            setError('dashboard-error', 'Set '+result.count+` Bookings to Complete` , true);
             showDashboard();
         } else {
             setError('dashboard-error', result.status);
@@ -1881,7 +1882,7 @@ function getRandomInt(min, max) {
 async function bookAppointment() {
     clearError('booking-error');
     
-    setError('booking-error', 'Booking in Proccessing.');
+    setError('booking-error', 'Booking in Proccessing.' , true);
     const _service = document.getElementById('booking-service')?.value;
     const time = document.getElementById('booking-time')?.value;
     const customerName = document.getElementById('customer-name')?.value.trim();
@@ -1968,7 +1969,7 @@ async function bookAppointment() {
         }
         const status = result.status;
         if(status == "success"){
-            setError('your_booking-error', 'Booking confirmed!');
+            setError('your_booking-error', 'Booking confirmed!' , true);
             showSection('your-booked-salon')
         }else{
             setError('booking-error', 'Failed to book appointment. Please try again.');
@@ -2055,7 +2056,7 @@ async function manualBook() {
         }
         const status = result.status;
         if(status == "success"){
-            setError('manual-dashboard-error', 'Manual booking confirmed!');
+            setError('manual-dashboard-error', 'Manual booking confirmed!' , true);
             showDashboard();
         }else{
             setError('manual-dashboard-error', 'Failed to book appointment. Please try again.');
