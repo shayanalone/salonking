@@ -4,7 +4,6 @@ const BASE_URL = 'https://salonking-backend.vercel.app'; // Replace with your ac
 
 const images = [
     'https://images.unsplash.com/photo-1662125502527-bb106378d560?w=1000',
-    'https://images.unsplash.com/photo-1590360316066-357b23e0dd15?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjF8fGRhcmslMjBzYWxvbiUyMGludGVyaW9yfGVufDB8MXwwfHx8Mg%3D%3D',
     'https://images.unsplash.com/photo-1603291783835-12c1ebe6c701?w=1000',
     'https://images.unsplash.com/photo-1629641320554-c8e8cfed610f?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzJ8fHNhbG9uJTIwaW50ZXJpb3J8ZW58MHwxfDB8fHwy'
 ];
@@ -226,7 +225,7 @@ async function showSection(sectionId, salonName, ownerName, location) {
         document.getElementById('customer-name').value = "";
         document.getElementById('booking-salon-name').textContent = salonName;
         document.getElementById('booking-owner-name').innerHTML = `<strong>Owner:</strong> ${ownerName}`;
-        document.getElementById('booking-location').innerHTML = `<strong style="font-size: 100%;">Location:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}" target="_blank" style="font-size: 100%;  color: rgb(0, 157, 255);">${location}</a>`;
+        document.getElementById('booking-location').innerHTML = `<strong style="font-size: 100%; line-height: 17px;">Location:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}" target="_blank" style="font-size: 100%;  color: rgb(0, 157, 255);">${location}</a>`;
         document.getElementById('booking-salon-discounts').textContent = salon.WholeServiceDiscounting > 0 ? `Discount: ${salon.WholeServiceDiscounting} PKR saab services mai` : "";
         document.getElementById('booking-owner-number').innerHTML = `<strong>Owner Number:</strong> ${salon.ownerNumber}`;
         const serviceSelect = document.getElementById('booking-service');
@@ -321,7 +320,9 @@ async function renderSalons(signal) {
     const clearLoading = showLoadingAnimation(grid);
     try {
         // Ensure salons is an array, fall back to empty array if null/undefined
-        salons = await RunSpecialPaths("getAllSalon", { signal }) || [];
+        if(salons == null || salons.length == 0){
+            salons = await RunSpecialPaths("getAllSalon", { signal }) || [];
+        }
         clearLoading();
         grid.innerHTML = '';
         if (salons.length === 0) {
@@ -351,7 +352,7 @@ async function renderSalons(signal) {
                     <h3 style="font-size: 100%;">${salon.salonName}</h3>
                     <p style="font-size: 75%; margin-top: -8px;"><strong>Owner:</strong> ${salon.ownerName}</p>
                     <p style="font-size: 75%; margin-top: -10px;"><strong>Opened:</strong> ${`${convertTo12HourFormat(salon.openTime) || 'N/A'} - ${convertTo12HourFormat(salon.closeTime) || 'N/A'}`}</p>
-                    <p class="location" style="margin-left: 1px; margin-bottom: -5px; margin-top: -5px"><strong style="font-size: 85%;">Location:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salon.location)}" target="_blank" style="font-size: 80%;  color: rgb(0, 157, 255);">${salon.location}</a></p>
+                    <p class="location" style="margin-left: 1px; margin-bottom: -5px; margin-top: -5px; line-height: 17px;"><strong style="font-size: 85%;">Location:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salon.location)}" target="_blank" style="font-size: 80%;  color: rgb(0, 157, 255);">${salon.location}</a></p>
                     </div>
                     <button class="btn" onclick="debounceShowSection('user-booking', '${salon.salonName}', '${salon.ownerName}', '${salon.location}')">Book Now</button>
                     `;
