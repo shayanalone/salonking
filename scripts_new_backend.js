@@ -1,5 +1,4 @@
 
-// const BASE_URL = 'http://127.0.0.1:5000'; // Replace with your actual Vercel URL
 const BASE_URL = 'https://salonking-backend.vercel.app'; // Replace with your actual Vercel URL
 
 const images = [
@@ -65,7 +64,7 @@ function moveSlide(sliderId, direction) {
 // Initialize static sliders
 ['dash-salon', 'booking-salon'].forEach(initSlider);
 
-const placeholderImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"%3E%3Crect width="300" height="200" fill="%23ddd"/%3E%3Ctext x="50%" y="50%" font-size="20" text-anchor="middle" fill="%23999" dy=".3em"%3EImage Loading...%3C/text%3E%3C/svg%3E';
+const placeholderImage = 'https://images.unsplash.com/photo-1749460264120-2219bc64be40?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwcm9maWxlLXBhZ2V8MXx8fGVufDB8fHx8fA%3D%3D';
 
 // Helper to Format Time for Next Available Slot
 function getNextAvailableTime(openTime, breaks = []) {
@@ -261,7 +260,7 @@ async function showSection(sectionId, salonName, ownerName, location) {
         Init_UserBooking_Times();
 
         const imageslider = document.getElementById('user-booking-images-slider');
-        const placeholderImage = 'https://via.placeholder.com/150';
+        const placeholderImage = 'https://images.unsplash.com/photo-1749460264120-2219bc64be40?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwcm9maWxlLXBhZ2V8MXx8fGVufDB8fHx8fA%3D%3D';
         const images = salon.salonImages || [];
         imageslider.innerHTML = images.map(imageUrl => 
             `<div class="slide" style="background-image: url('${imageUrl || placeholderImage}')"></div>`
@@ -522,7 +521,7 @@ async function showDashboard() {
         renderBookings(canceled, 'canceled-bookings-grid' , false);
 
         const imageslider = document.getElementById('dash-slide-images');
-        const placeholderImage = 'https://via.placeholder.com/150'; // Fallback image URL
+        const placeholderImage = 'https://images.unsplash.com/photo-1749460264120-2219bc64be40?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwcm9maWxlLXBhZ2V8MXx8fGVufDB8fHx8fA%3D%3D'; // Fallback image URL
         const images = your_salon.salonImages || []; // Fallback to empty array if images is undefined
         
         // Clear existing content and generate new slides
