@@ -84,7 +84,7 @@ function getNextAvailableTime(openTime, breaks = []) {
 // Loading Animation
 function showLoadingAnimation(grid) {
     if (!grid) return () => {};
-    grid.innerHTML = '<p id="loading-text" style="text-align: center; font-weight: bold; font-size: 1em;">loading.</p>';
+    grid.innerHTML = '<p id="loading-text" style="text-align: center; font-weight: bold; font-size: 1em;">loading.</p> <div style="height: 200px;"></div>';
     const states = ["loading.", "loading..", "loading...", "loading..", "loading.", "loading"];
     let index = 0;
     const interval = setInterval(() => {
