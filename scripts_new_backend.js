@@ -2003,7 +2003,7 @@ async function bookAppointment() {
         return;
     }
 
-    let nextDayDate = timeToMinutes(time.substring(0 , time.indexOf('s'))) < timeToMinutes(your_salon.closeTime);
+    let nextDayDate = timeToMinutes(time.substring(0 , time.indexOf('s'))) < timeToMinutes(salon.closeTime);
 
     const Signal = currentAbortController.signal;
     try {
@@ -2355,7 +2355,6 @@ async function getSpecialSalonBookingData(salonId , salonName, options = {}) {
             ? Object.values(data)
             : data;
 
-        console.log(JSON.stringify(convertedData));
         return convertedData;
     } catch (error) {
         if (error.name === 'AbortError') {
