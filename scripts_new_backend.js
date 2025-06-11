@@ -348,7 +348,7 @@ async function renderSalons(signal) {
                     <button class="slider-btn next" onclick="moveSlide('${sliderId}', 1)">❯</button>
                 </div>
                 <div class="details">
-                    <h3 style="font-size: 100%;">${salon.salonName}</h3>
+                    <h3 style="font-size: 100%;  margin-top: 10px;">${salon.salonName}</h3>
                     <p style="font-size: 82%; margin-top: -8px;"><strong>Owner:</strong> ${salon.ownerName}</p>
                     <p style="font-size: 82%; margin-top: -10px;"><strong>Opened:</strong> ${`${convertTo12HourFormat(salon.openTime) || 'N/A'} - ${convertTo12HourFormat(salon.closeTime) || 'N/A'}`}</p>
                     <p class="location" style="margin-left: 1px; margin-bottom: -5px; margin-top: -5px; line-height: 17px;"><strong style="font-size: 85%;">Location:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salon.location)}" target="_blank" style="font-size: 80%;  color: rgb(0, 157, 255);">${salon.location}</a></p>
@@ -460,7 +460,7 @@ async function showDashboard() {
     const signal = currentAbortController?.signal;
     if (salon_Index >= 0) {
 
-        showForm('salon-dashboard');
+        showForm('salon-dashboard' , true);
         
         const dashSalonName = document.getElementById('dash-salon-name');
         const dashOwnerName = document.getElementById('dash-owner-name');
@@ -595,7 +595,7 @@ async function showDashboard() {
         targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' , inline: 'center'});
     }
 }
-function showForm(formId) {
+function showForm(formId , notScroll = false) {
     const forms = ['salon-loading' , 'salon-login', 'salon-register', 'salon-dashboard', 'salon-settings'];
     forms.forEach(id => {
         const element = document.getElementById(id);
@@ -607,9 +607,10 @@ function showForm(formId) {
         populateSettings();
     }
 
-    
-    const targetSection = document.getElementById("your-salon");
-    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' , inline: 'center'});
+    if(!notScroll){
+        const targetSection = document.getElementById("your-salon");
+        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' , inline: 'center'});
+    }
 }
 // Mock Data
 let deviceId = "";
@@ -854,6 +855,7 @@ async function registerSalon() {
     const salonName = document.getElementById('reg-salon-name')?.value.trim();
     const password = document.getElementById('reg-password')?.value;
     const location = document.getElementById('reg-location')?.value.trim();
+    const isOverTime = document.getElementById('reg-over-time')?.checked;
     const openTime = document.getElementById('reg-open-time')?.value;
     const closeTime = document.getElementById('reg-close-time')?.value;
     const seatCount = parseInt( document.getElementById('reg-seatCount')?.value );
@@ -912,6 +914,7 @@ async function registerSalon() {
                                    salonName,
                                    password,
                                    location,
+                                   isOverTime,
                                    openTime,
                                    closeTime,
                                    SeatCount: seatCount,
@@ -1032,6 +1035,7 @@ async function saveSettings() {
     const password = document.getElementById('set-password')?.value;
     const location = document.getElementById('set-location')?.value.trim();
     const setSeatCount = document.getElementById('set-seatCount')?.value;
+    const isOverTime = document.getElementById('set-over-time')?.checked;
     const openTime = document.getElementById('set-open-time')?.value;
     const closeTime = document.getElementById('set-close-time')?.value;
     let WholeServiceDiscounting = document.getElementById('set-service-all_Discounting')?.value;
@@ -1047,10 +1051,10 @@ async function saveSettings() {
         setError('settings-error', 'Please enter a valid Pakistani phone number (e.g., 03001234567 or +923001234567).');
         return;
     }
-    if (!validateTimeRange(openTime, closeTime)) {
-        setError('settings-error', 'Opening time must be before closing time.');
-        return;
-    }
+    // if (!validateTimeRange(openTime, closeTime)) {
+    //     setError('settings-error', 'Opening time must be before closing time.');
+    //     return;
+    // }
     const breaks = Array.from(document.querySelectorAll('#set-break-list .list-item')).map(item => ({
         from: item.querySelector('.break-from')?.value,
         to: item.querySelector('.break-to')?.value
@@ -1088,6 +1092,7 @@ async function saveSettings() {
                 salonName,
                 password,
                 location,
+                isOverTime,
                 openTime,
                 closeTime,
                 WholeServiceDiscounting,
@@ -1690,13 +1695,18 @@ async function Init_UserBooking_Times() {
     timeSelect.innerHTML = '<option value="" disabled selected>Loading available times...</option>';
 
     try {
+        const isOverTime = salon.isOverTime;
         const now = new Date();
         const currentMinutes = now.getHours() * 60 + now.getMinutes(); // 12:27 PM = 747 minutes
         const openMinutes = timeToMinutes(salon.openTime); // e.g., "09:00 AM" = 540
         const closeMinutes = timeToMinutes(salon.closeTime); // e.g., "10:00 PM" = 1320
 
         // Check if salon is closed
-        if (currentMinutes < openMinutes - 60 || currentMinutes >= closeMinutes) {
+        if (isOverTime == false && (currentMinutes < openMinutes - 60 || currentMinutes >= closeMinutes)) {
+            timeSelect.innerHTML = '<option value="" disabled selected>SALON IS CLOSED</option>';
+            return;
+        }
+        if (isOverTime == true && (currentMinutes < openMinutes - 60 && currentMinutes >= closeMinutes)) {
             timeSelect.innerHTML = '<option value="" disabled selected>SALON IS CLOSED</option>';
             return;
         }
@@ -1713,8 +1723,11 @@ async function Init_UserBooking_Times() {
         const bookings = await getSpecialSalonBookingData(salon.salonId , _salonName, { signal }) || [];
 
         let hasAvailableSlots = false;
+        let over24Hourse = false;
 
-        while (startMinutes < closeMinutes) {
+        console.log("start: "+ startMinutes);
+        while ((isOverTime == false && startMinutes < closeMinutes)
+            || (isOverTime == true && ((over24Hourse == false && startMinutes < 1445) || (over24Hourse == true && startMinutes < closeMinutes)))) {
             const timeStr = minutesToTime(startMinutes);
 
             // Check if the time slot is during a break
@@ -1757,7 +1770,7 @@ async function Init_UserBooking_Times() {
             }
 
             // Check if the service duration fits within operating hours and breaks
-            const fitsSchedule = serviceEnd <= closeMinutes &&
+            const fitsSchedule = ((isOverTime && over24Hourse == false) || serviceEnd <= closeMinutes) &&
                 !breaks.some(b => {
                     const breakStart = timeToMinutes(b.from);
                     const breakEnd = timeToMinutes(b.to);
@@ -1773,6 +1786,10 @@ async function Init_UserBooking_Times() {
             }
 
             startMinutes += 5; // Increment by 10 minutes
+            if(startMinutes >= 1445){
+                startMinutes = 0;
+                over24Hourse = true;
+            }
         }
 
         if (!hasAvailableSlots) {
@@ -1804,13 +1821,18 @@ async function Init_ManualBooking_Times() {
     timeSelect.innerHTML = '<option value="" disabled selected>Loading available times...</option>';
 
     try {
+        const isOverTime = your_salon.isOverTime;
         const now = new Date();
         const currentMinutes = now.getHours() * 60 + now.getMinutes(); 
         const openMinutes = timeToMinutes(your_salon.openTime);
         const closeMinutes = timeToMinutes(your_salon.closeTime);
 
         // Check if your_salon is closed
-        if (currentMinutes < openMinutes - 60 || currentMinutes >= closeMinutes) {
+        if (isOverTime == false && (currentMinutes < openMinutes - 60 || currentMinutes >= closeMinutes)) {
+            timeSelect.innerHTML = '<option value="" disabled selected>SALON IS CLOSED</option>';
+            return;
+        }
+        if (isOverTime == true && (currentMinutes < openMinutes - 60 && currentMinutes >= closeMinutes)) {
             timeSelect.innerHTML = '<option value="" disabled selected>SALON IS CLOSED</option>';
             return;
         }
@@ -1828,7 +1850,11 @@ async function Init_ManualBooking_Times() {
 
         let hasAvailableSlots = false;
 
-        while (startMinutes < closeMinutes) {
+        let over24Hourse = false;
+
+        console.log("start: "+ startMinutes);
+        while ((isOverTime == false && startMinutes < closeMinutes)
+            || (isOverTime == true && ((over24Hourse == false && startMinutes < 1445) || (over24Hourse == true && startMinutes < closeMinutes)))) {
             const timeStr = minutesToTime(startMinutes);
 
             // Check if the time slot is during a break
@@ -1871,7 +1897,7 @@ async function Init_ManualBooking_Times() {
             }
 
             // Check if the service duration fits within operating hours and breaks
-            const fitsSchedule = serviceEnd <= closeMinutes &&
+            const fitsSchedule = ((isOverTime && over24Hourse == false) || serviceEnd <= closeMinutes) &&
                 !breaks.some(b => {
                     const breakStart = timeToMinutes(b.from);
                     const breakEnd = timeToMinutes(b.to);
@@ -1887,6 +1913,10 @@ async function Init_ManualBooking_Times() {
             }
 
             startMinutes += 5; // Increment by 10 minutes
+            if(startMinutes >= 1445){
+                startMinutes = 0;
+                over24Hourse = true;
+            }
         }
 
         if (!hasAvailableSlots) {
@@ -2109,32 +2139,32 @@ function checkTimeSlotAvailability(salon, bookings, breaks, time, serviceDuratio
     if (!salon || !time || !bookings || !breaks) {
         return "Invalid input parameters";
     }
+    
+    // const now = new Date();
+    // const currentMinutes = now.getHours() * 60 + now.getMinutes(); // 03:37 PM = 1037 minutes
+    // const openMinutes = timeToMinutes(salon.openTime);
+    // const closeMinutes = timeToMinutes(salon.closeTime);
+    
+    // // Validate time format and range
+    // if (isNaN(requestedMinutes) || requestedMinutes < openMinutes || requestedMinutes >= closeMinutes) {
+    //     return "Salon closed";
+    // }
 
-    const now = new Date();
-    const currentMinutes = now.getHours() * 60 + now.getMinutes(); // 03:37 PM = 1037 minutes
-    const openMinutes = timeToMinutes(salon.openTime);
-    const closeMinutes = timeToMinutes(salon.closeTime);
+    // // Check if salon is closed based on current time
+    // if (currentMinutes < openMinutes - 60 || currentMinutes >= closeMinutes)) {
+    //     return "Salon closed";
+    // }
+
     const requestedMinutes = timeToMinutes(time);
-
-    // Validate time format and range
-    if (isNaN(requestedMinutes) || requestedMinutes < openMinutes || requestedMinutes >= closeMinutes) {
-        return "Salon closed";
-    }
-
-    // Check if salon is closed based on current time
-    if (currentMinutes < openMinutes - 60 || currentMinutes >= closeMinutes) {
-        return "Salon closed";
-    }
 
     // Determine service duration
     let user_choice_service = serviceDuration;
-
     const serviceEnd = requestedMinutes + user_choice_service;
-
+    
     // Check if the slot fits within operating hours and breaks
-    if (serviceEnd > closeMinutes) {
-        return "Slot exceeds closing time";
-    }
+    // if (serviceEnd > closeMinutes) {
+    //     return "Slot exceeds closing time";
+    // }
     if (breaks.some(b => {
         const breakStart = timeToMinutes(b.from);
         const breakEnd = timeToMinutes(b.to);
