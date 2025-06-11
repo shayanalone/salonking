@@ -971,6 +971,7 @@ async function populateSettings() {
     const setSalonName = document.getElementById('set-salon-name');
     const setPassword = document.getElementById('set-password');
     const setLocation = document.getElementById('set-location');
+    const setOverTime = document.getElementById('set-over-time');
     const setOpenTime = document.getElementById('set-open-time');
     const setCloseTime = document.getElementById('set-close-time');
     const setSeatCount = document.getElementById('set-seatCount');
@@ -983,6 +984,7 @@ async function populateSettings() {
     if (setPassword) setPassword.value = your_salon.password || '';
     if (setLocation) setLocation.value = your_salon.location || '';
     if (setSeatCount) setSeatCount.value = your_salon.SeatCount || '';
+    if (setOverTime) setOverTime.value = your_salon.isOverTime || '';
     if (setOpenTime) setOpenTime.value = your_salon.openTime || '';
     if (setCloseTime) setCloseTime.value = your_salon.closeTime || '';
     if (set_WholeServiceDiscounting) set_WholeServiceDiscounting.value = your_salon.WholeServiceDiscounting || 0;
