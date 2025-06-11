@@ -1197,9 +1197,8 @@ function renderBookings(bookings, gridId , sort ) {
             card.className = 'booking-card';
 
             // ${booking.status === 'pending' && index === 0 ? "<h4>Your Next Customer</h4><hr>" : ""}
-            if(booking.customerName == "Manual"){
+            if(booking.deviceId == "manual"){
                 card.innerHTML = `
-                    ${booking.status === 'user canceled' ? `<strong>Canceled by User</strong>` : ""}
                     <p style="margin-left: 5px; margin-top: 5px; font-size: 82%;"><strong>Name:</strong> ${booking.customerName}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Date:</strong> ${booking.date}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Time:</strong> ${booking.time.substring(0, booking.time.indexOf("s"))} - ${minutesToTime(timeToMinutes(booking.time) + booking.time_take)}</p>
@@ -1964,8 +1963,8 @@ async function bookAppointment() {
     const breaks = salon.breaks || [];
     let bookings = await getSpecialSalonBookingData(salon.salonId , _salonName) || [];
     const r = checkTimeSlotAvailability(salon , bookings , breaks , time.substring(0 , time.indexOf('s')) , time_take);
-    if(r != "1"){
-        setError("booking-error" , 'Failed: '+r);
+    if(r == "failed"){
+        setError("booking-error" , 'Failed: Another Person Booked this Time');
         Init_UserBooking_Times();
         return;
     }
@@ -2017,9 +2016,10 @@ async function bookAppointment() {
 }
 async function manualBook() {
     clearError('manual-dashboard-error');
+    const customerName = document.getElementById('manualBooking-customer-name')?.value;
     const time_take = document.getElementById('manualBooking-timeTake')?.value;
     const selected_time = document.getElementById('manual-booking-time')?.value;
-    
+
     // Validate input
     if (!time_take) {
         setError("manual-dashboard-error" , 'Please enter how much time the service takes.');
@@ -2039,21 +2039,24 @@ async function manualBook() {
     setError("manual-dashboard-error" , 'Checking availability...');
 
     let _time = "";
+    let curTime = false;
     if(selected_time && selected_time != ""){
         _time = selected_time;
+        curTime = false;
     }
     else{
         
         const now = new Date();
         const currentMinutes = now.getHours() * 60 + now.getMinutes(); // e.g., 04:49 PM = 1009 minutes
         const timeStr = minutesToTime(currentMinutes);
-        _time = timeStr + "s" + (1);
+        _time = timeStr + "s";
+        curTime = true;
     }
     const breaks = your_salon.breaks || [];
     const bookings = await getSpecialSalonBookingData(your_salon.salonId , your_salon.salonName) || [];
     const r = checkTimeSlotAvailability(your_salon , bookings , breaks , _time.substring(0 , _time.indexOf('s')) , user_choice_service);
-    if(r != "1"){
-        setError("manual-dashboard-error" , 'Failed: '+r);
+    if(r == "failed"){
+        setError("manual-dashboard-error" , 'Failed: Another Person Booked this Time');
         Init_ManualBooking_Times();
         return;
     }
@@ -2071,10 +2074,10 @@ async function manualBook() {
                                     "location": your_salon.location,
                                     "deviceId": 'manual',
                                     "service": "Manual Booking",
-                                    "time": _time,
+                                    "time": curTime == true ? _time + r.toString() : _time,
                                     "time_take": user_choice_service,
                                     "customerImage": '',
-                                    "customerName": 'Manual',
+                                    "customerName": customerName == "" ? "Manual" : customerName,
                                     "customerNumber": "0000",
                                     "code": 'BOOK' + Math.random().toString(36).substring(2, 8),
                                     "date": new Date().toISOString().split('T')[0], }),
@@ -2172,10 +2175,10 @@ function checkTimeSlotAvailability(salon, bookings, breaks, time, serviceDuratio
     }
 
     if (!isSlotAvailable || maxBookedSeats >= salon.SeatCount || Booked_Count >= salon.SeatCount) {
-        return "Slot unavailable";
+        return "failed";
     }
 
-    return 1;
+    return Booked_Count + 1;
 }
 
 async function RunSpecialPaths(id , options = {}) {

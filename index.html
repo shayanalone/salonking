@@ -291,10 +291,10 @@
                     <div class="salon-card">
                         <h3>Booking Stats</h3>
                         <div class="details">
-                            <p><strong>Pending Bookings :</strong> <span id="pending-bookings">0</span></p>
+                            <p style="font-size: 80%;"><strong>Pending Bookings :</strong> <span id="pending-bookings">0</span></p>
 
                             <div style="height: 15px;"></div>
-                            
+
                             <p><strong>Total Bookings:</strong> <span id="total-bookings">0</span></p>
                             <p><strong>Canceled Bookings:</strong> <span id="canceled-bookings">0</span></p>
                             <p><strong>Completed Bookings:</strong> <span id="completed-bookings">0</span></p>
@@ -323,6 +323,10 @@
                     <label for="manualBooking-timeTake">please agar kisi ki booking ho to kisi or ko nahi bulaye ga</p>
                         
                         
+                    <label style=" font-weight: bold;" for="manualBooking-customer-name">Customer Name</label>
+                    <input type="text" id="manualBooking-customer-name" placeholder="Here Enter Name (Optional)">
+                    <div style="height: 2px;"> </div>
+
                     <label for="manualBooking-timeTake"><strong>Time to done</strong>:</label>
                     <!-- <input type="number" id="manualBooking-timeTake" placeholder="Time to Done Work in Minutes" required> -->
                     <select id="manualBooking-timeTake" required>
@@ -373,7 +377,7 @@
             <label style=" font-weight: bold;" for="customer-name">Your Name</label>
             <input type="text" id="customer-name" placeholder="Here Enter Your Name">
             <div style="height: 2px;"> </div>
-            <label style="font-weight: bold; margin-bottom: -4px;" for="customer-number">Youe Number</label>
+            <label style="font-weight: bold; margin-bottom: -4px;" for="customer-number">Your Number</label>
             <label style="font-weight: bold; margin-bottom: -1px;" for="customer-number">(for Notify any emergency cancel or others)</label>
             <input type="tel" id="customer-number" placeholder="Here Enter Your Number">
             <div style="height: 2px;"> </div>
