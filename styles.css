@@ -197,7 +197,7 @@ header {
 .salon-card, .booking-card {
     background-color: rgba(0, 0, 0, 0.599); /* Lighter dark gray */
     border-radius: 2px;
-    box-shadow: 0px -1px 4px 0px rgba(233, 233, 233, 0.2);
+    box-shadow: 0px -1px 3px 0px rgba(233, 233, 233, 0.175);
     width: 100%;
     text-align: left;
     padding: 0.2rem;

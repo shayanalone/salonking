@@ -1197,20 +1197,34 @@ function renderBookings(bookings, gridId , sort ) {
             card.className = 'booking-card';
 
             // ${booking.status === 'pending' && index === 0 ? "<h4>Your Next Customer</h4><hr>" : ""}
-            card.innerHTML = `
-                ${booking.status === 'user canceled' ? `<strong>Canceled by User</strong>` : ""}
-                <p style="margin-left: 5px; margin-top: 5px; font-size: 82%;"><strong>Name:</strong> ${booking.customerName}</p>
-                <p style="margin-left: 5px; font-size: 82%;"><strong>Number:</strong> ${booking.customerNumber}</p>
-                <p style="margin-left: 5px; font-size: 82%;"><strong>Service:</strong> ${booking.service}</p>
-                <p style="margin-left: 5px; font-size: 82%;"><strong>Price:</strong> ${booking.price}</p>
-                <p style="margin-left: 5px; font-size: 82%;"><strong>Date:</strong> ${booking.date}</p>
-                <p style="margin-left: 5px; font-size: 82%;"><strong>Time:</strong> ${booking.time.substring(0, booking.time.indexOf("s"))} - ${minutesToTime(timeToMinutes(booking.time) + booking.time_take)}</p>
-                <p style="margin-left: 5px; font-size: 82%;"><strong>Time Taken:</strong> ${booking.time_take}</p>
-                <p style="margin-left: 5px; font-size: 82%;"><strong>Code:</strong> ${booking.code}</p>
-                <p style="margin-left: 5px; margin-bottom: 5px;font-size: 82%;"><strong>Seat:</strong> ${booking.time.substring(booking.time.indexOf("s") + 1)}</p>
-                ${booking.status === 'pending' ? `<button class="btn" onclick="dash_cancelBooking('${booking.code}')">Cancel This Booking</button>
-                <button class="btn" onclick="dash_Complete_Customer('${booking.code}')">Complete This Booking</button>` : ``}
-            `;
+            if(booking.customerName == "Manual"){
+                card.innerHTML = `
+                    ${booking.status === 'user canceled' ? `<strong>Canceled by User</strong>` : ""}
+                    <p style="margin-left: 5px; margin-top: 5px; font-size: 82%;"><strong>Name:</strong> ${booking.customerName}</p>
+                    <p style="margin-left: 5px; font-size: 82%;"><strong>Date:</strong> ${booking.date}</p>
+                    <p style="margin-left: 5px; font-size: 82%;"><strong>Time:</strong> ${booking.time.substring(0, booking.time.indexOf("s"))} - ${minutesToTime(timeToMinutes(booking.time) + booking.time_take)}</p>
+                    <p style="margin-left: 5px; font-size: 82%;"><strong>Time Taken:</strong> ${booking.time_take}</p>
+                    <p style="margin-left: 5px; font-size: 82%;"><strong>Code:</strong> ${booking.code}</p>
+                    <p style="margin-left: 5px; margin-bottom: 5px;font-size: 82%;"><strong>Seat:</strong> ${booking.time.substring(booking.time.indexOf("s") + 1)}</p>
+                    ${booking.status === 'pending' ? `<button class="btn" onclick="dash_cancelBooking('${booking.code}')">Cancel This Booking</button>
+                    <button class="btn" onclick="dash_Complete_Customer('${booking.code}')">Complete This Booking</button>` : ``}
+                `;
+            }else{
+                card.innerHTML = `
+                    ${booking.status === 'user canceled' ? `<strong>Canceled by User</strong>` : ""}
+                    <p style="margin-left: 5px; margin-top: 5px; font-size: 82%;"><strong>Name:</strong> ${booking.customerName}</p>
+                    <p style="margin-left: 5px; font-size: 82%;"><strong>Number:</strong> ${booking.customerNumber}</p>
+                    <p style="margin-left: 5px; font-size: 82%;"><strong>Service:</strong> ${booking.service}</p>
+                    <p style="margin-left: 5px; font-size: 82%;"><strong>Price:</strong> ${booking.price}</p>
+                    <p style="margin-left: 5px; font-size: 82%;"><strong>Date:</strong> ${booking.date}</p>
+                    <p style="margin-left: 5px; font-size: 82%;"><strong>Time:</strong> ${booking.time.substring(0, booking.time.indexOf("s"))} - ${minutesToTime(timeToMinutes(booking.time) + booking.time_take)}</p>
+                    <p style="margin-left: 5px; font-size: 82%;"><strong>Time Taken:</strong> ${booking.time_take}</p>
+                    <p style="margin-left: 5px; font-size: 82%;"><strong>Code:</strong> ${booking.code}</p>
+                    <p style="margin-left: 5px; margin-bottom: 5px;font-size: 82%;"><strong>Seat:</strong> ${booking.time.substring(booking.time.indexOf("s") + 1)}</p>
+                    ${booking.status === 'pending' ? `<button class="btn" onclick="dash_cancelBooking('${booking.code}')">Cancel This Booking</button>
+                    <button class="btn" onclick="dash_Complete_Customer('${booking.code}')">Complete This Booking</button>` : ``}
+                `;
+            }
             
             grid.appendChild(card);
             index += 1;
