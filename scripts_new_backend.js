@@ -466,6 +466,7 @@ async function showDashboard() {
         const dashOwnerName = document.getElementById('dash-owner-name');
         const dashOwnerNumber = document.getElementById('dash-owner-number');
         const dashLocation = document.getElementById('dash-location');
+        const dashOverTime = document.getElementById('dash-overTime');
         const dashHours = document.getElementById('dash-hours');
         const dashBreaks = document.getElementById('dash-breaks');
         const dashServices = document.getElementById('dash-services');
@@ -474,6 +475,7 @@ async function showDashboard() {
         if (dashOwnerName) dashOwnerName.textContent = your_salon.ownerName || 'N/A';
         if (dashOwnerNumber) dashOwnerNumber.textContent = your_salon.ownerNumber || 'N/A';
         if (dashLocation) dashLocation.innerHTML = `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(your_salon.location)}" target="_blank">${your_salon.location || 'N/A'}</a>`;
+        if (dashOverTime) dashOverTime.textContent = your_salon.isOverTime == true ? "Yes" : "No";
         if (dashHours) dashHours.textContent = `${convertTo12HourFormat(your_salon.openTime) || 'N/A'} - ${convertTo12HourFormat(your_salon.closeTime) || 'N/A'}`;
         if (dashBreaks) dashBreaks.textContent = your_salon.breaks?.length > 0 ? your_salon.breaks.map(b => `${b.from} - ${b.to}`).join(', ') : 'None';
         if (dashServices) dashServices.textContent = your_salon.services?.length > 0 ? your_salon.services.map(s => s.name).join(', ') : 'None';
@@ -543,6 +545,7 @@ async function showDashboard() {
                     if (dashOwnerName) dashOwnerName.textContent = your_salon.ownerName || 'N/A';
                     if (dashOwnerNumber) dashOwnerNumber.textContent = your_salon.ownerNumber || 'N/A';
                     if (dashLocation) dashLocation.innerHTML = `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(your_salon.location)}" target="_blank">${your_salon.location || 'N/A'}</a>`;
+                    if (dashOverTime) dashOverTime.textContent = your_salon.isOverTime == true ? "Yes" : "No";
                     if (dashHours) dashHours.textContent = `${convertTo12HourFormat(your_salon.openTime) || 'N/A'} - ${convertTo12HourFormat(your_salon.closeTime) || 'N/A'}`;
                     if (dashBreaks) dashBreaks.textContent = your_salon.breaks?.length > 0 ? your_salon.breaks.map(b => `${b.from} - ${b.to}`).join(', ') : 'None';
                     if (dashServices) dashServices.textContent = your_salon.services?.length > 0 ? your_salon.services.map(s => s.name).join(', ') : 'None';
@@ -984,7 +987,7 @@ async function populateSettings() {
     if (setPassword) setPassword.value = your_salon.password || '';
     if (setLocation) setLocation.value = your_salon.location || '';
     if (setSeatCount) setSeatCount.value = your_salon.SeatCount || '';
-    if (setOverTime) setOverTime.value = your_salon.isOverTime || '';
+    if (setOverTime) setOverTime.checked = your_salon.isOverTime || '';
     if (setOpenTime) setOpenTime.value = your_salon.openTime || '';
     if (setCloseTime) setCloseTime.value = your_salon.closeTime || '';
     if (set_WholeServiceDiscounting) set_WholeServiceDiscounting.value = your_salon.WholeServiceDiscounting || 0;
@@ -1207,7 +1210,7 @@ function renderBookings(bookings, gridId , sort ) {
             if(booking.deviceId == "manual"){
                 card.innerHTML = `
                     <p style="margin-left: 5px; margin-top: 5px; font-size: 82%;"><strong>Name:</strong> ${booking.customerName}${booking.customerName=="Manual" ? "" : " - Manual"}</p>
-                    <p style="margin-left: 5px; font-size: 82%;"><strong>Date:</strong> ${booking.date}</p>
+                    <p style="margin-left: 5px; font-size: 82%;"><strong>Date:</strong> ${formatDate(booking.date)}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Time:</strong> ${booking.time.substring(0, booking.time.indexOf("s"))} - ${minutesToTime(timeToMinutes(booking.time) + booking.time_take)}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Time Taken:</strong> ${booking.time_take}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Code:</strong> ${booking.code}</p>
@@ -1222,7 +1225,7 @@ function renderBookings(bookings, gridId , sort ) {
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Number:</strong> ${booking.customerNumber}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Service:</strong> ${booking.service}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Price:</strong> ${booking.price}</p>
-                    <p style="margin-left: 5px; font-size: 82%;"><strong>Date:</strong> ${booking.date}</p>
+                    <p style="margin-left: 5px; font-size: 82%;"><strong>Date:</strong> ${formatDate(booking.date)}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Time:</strong> ${booking.time.substring(0, booking.time.indexOf("s"))} - ${minutesToTime(timeToMinutes(booking.time) + booking.time_take)}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Time Taken:</strong> ${booking.time_take}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Code:</strong> ${booking.code}</p>
@@ -1281,6 +1284,7 @@ async function renderUserBookings(bookings) {
                     <p style="margin-left: 10px;  font-size: 80%;"> <strong>Phone Number:</strong> ${booking.customerNumber}</p>
                     <p style="margin-left: 10px;  font-size: 80%;"> <strong>Service:</strong> ${booking.service}</p>
                     <p style="margin-left: 10px;  font-size: 80%;"> <strong>Price:</strong> ${booking.price}</p>
+                    <p style="margin-left: 10px;  font-size: 80%;"> <strong>Booked Date:</strong> ${formatDate(booking.date)}</p>
                     <p style="margin-left: 10px;  font-size: 80%;"> <strong>Booked Time:</strong> ${booking.time.substring(0, booking.time.indexOf("s"))}, Done at: ${minutesToTime(timeToMinutes(booking.time) + booking.time_take)} </p>
                     <p style="margin-left: 10px;  font-size: 80%;"> <strong>Seat:</strong> ${booking.time.substring(booking.time.indexOf("s") + 1)}</p>
                     <button class="btn" onclick="cancelBooking('${booking.code}')">Cancel This Booking</button>
@@ -1718,16 +1722,15 @@ async function Init_UserBooking_Times() {
 
         // Start time: current time or open time, rounded to next 10-minute interval
         const round_minutes = 5;
-        let startMinutes = Math.max(currentMinutes, openMinutes);
+        let startMinutes = currentMinutes;
         startMinutes = Math.ceil(startMinutes / round_minutes) * round_minutes; // Rounds 12:27 PM to 12:30 PM
 
         const breaks = salon.breaks || [];
         const bookings = await getSpecialSalonBookingData(salon.salonId , _salonName, { signal }) || [];
 
         let hasAvailableSlots = false;
-        let over24Hourse = false;
+        let over24Hourse = startMinutes < closeMinutes;
 
-        console.log("start: "+ startMinutes);
         while ((isOverTime == false && startMinutes < closeMinutes)
             || (isOverTime == true && ((over24Hourse == false && startMinutes < 1445) || (over24Hourse == true && startMinutes < closeMinutes)))) {
             const timeStr = minutesToTime(startMinutes);
@@ -1827,7 +1830,7 @@ async function Init_ManualBooking_Times() {
         const now = new Date();
         const currentMinutes = now.getHours() * 60 + now.getMinutes(); 
         const openMinutes = timeToMinutes(your_salon.openTime);
-        const closeMinutes = timeToMinutes(your_salon.closeTime) + 60;
+        const closeMinutes = timeToMinutes(your_salon.closeTime) + 120;
 
         // Check if your_salon is closed
         if (isOverTime == false && (currentMinutes < openMinutes - 60 || currentMinutes >= closeMinutes)) {
@@ -1844,7 +1847,7 @@ async function Init_ManualBooking_Times() {
 
         // Start time: current time or open time, rounded to next 10-minute interval
         const round_minutes = 5;
-        let startMinutes = Math.max(currentMinutes, openMinutes);
+        let startMinutes = currentMinutes;
         startMinutes = Math.ceil(startMinutes / round_minutes) * round_minutes; // Rounds 12:27 PM to 12:30 PM
 
         const breaks = your_salon.breaks || [];
@@ -1852,9 +1855,8 @@ async function Init_ManualBooking_Times() {
 
         let hasAvailableSlots = false;
 
-        let over24Hourse = false;
+        let over24Hourse = startMinutes < closeMinutes;
 
-        console.log("start: "+ startMinutes);
         while ((isOverTime == false && startMinutes < closeMinutes)
             || (isOverTime == true && ((over24Hourse == false && startMinutes < 1445) || (over24Hourse == true && startMinutes < closeMinutes)))) {
             const timeStr = minutesToTime(startMinutes);
@@ -2001,6 +2003,8 @@ async function bookAppointment() {
         return;
     }
 
+    let nextDayDate = timeToMinutes(time.substring(0 , time.indexOf('s'))) < timeToMinutes(your_salon.closeTime);
+
     const Signal = currentAbortController.signal;
     try {
         const { signal } = Signal;
@@ -2016,6 +2020,7 @@ async function bookAppointment() {
                                     "deviceId": localStorage.getItem("Device_Id") || '',
                                     service ,
                                     price ,
+                                    "nextDayDate": nextDayDate == false,
                                     time,
                                     time_take,
                                     "customerImage": '',
@@ -2092,7 +2097,10 @@ async function manualBook() {
         Init_ManualBooking_Times();
         return;
     }
-    
+    if(curTime){
+        _time += r.toString();
+    }
+    let nextDayDate = timeToMinutes(_time.substring(0 , _time.indexOf('s'))) < timeToMinutes(your_salon.closeTime);
     const Signal = currentAbortController.signal;
     try {
         const { signal } = Signal;
@@ -2106,6 +2114,7 @@ async function manualBook() {
                                     "location": your_salon.location,
                                     "deviceId": 'manual',
                                     "service": "Manual Booking",
+                                    "nextDayDate": nextDayDate == false,
                                     "time": curTime == true ? _time + r.toString() : _time,
                                     "time_take": user_choice_service,
                                     "customerImage": '',
@@ -2392,4 +2401,11 @@ async function getDefaultImagesData(options = {}) {
         console.error(`Error fetching data from:`, error);
         throw error;
     }
+}
+function formatDate(dateStr) {
+    let date = new Date(dateStr);
+    let day = date.getDate().toString().padStart(2, '0');
+    let month = date.toLocaleString('en-US', { month: 'long' });
+    let year = date.getFullYear();
+    return `${day}-${month}-${year}`;
 }
