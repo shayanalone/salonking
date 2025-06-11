@@ -1827,7 +1827,7 @@ async function Init_ManualBooking_Times() {
         const now = new Date();
         const currentMinutes = now.getHours() * 60 + now.getMinutes(); 
         const openMinutes = timeToMinutes(your_salon.openTime);
-        const closeMinutes = timeToMinutes(your_salon.closeTime);
+        const closeMinutes = timeToMinutes(your_salon.closeTime) + 60;
 
         // Check if your_salon is closed
         if (isOverTime == false && (currentMinutes < openMinutes - 60 || currentMinutes >= closeMinutes)) {
