@@ -1199,7 +1199,7 @@ function renderBookings(bookings, gridId , sort ) {
             // ${booking.status === 'pending' && index === 0 ? "<h4>Your Next Customer</h4><hr>" : ""}
             if(booking.deviceId == "manual"){
                 card.innerHTML = `
-                    <p style="margin-left: 5px; margin-top: 5px; font-size: 82%;"><strong>Name:</strong> ${booking.customerName}</p>
+                    <p style="margin-left: 5px; margin-top: 5px; font-size: 82%;"><strong>Name:</strong> ${booking.customerName}${booking.customerName=="Manual" ? "" : " - Manual"}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Date:</strong> ${booking.date}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Time:</strong> ${booking.time.substring(0, booking.time.indexOf("s"))} - ${minutesToTime(timeToMinutes(booking.time) + booking.time_take)}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Time Taken:</strong> ${booking.time_take}</p>
