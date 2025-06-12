@@ -2162,7 +2162,7 @@ async function manualBook() {
                                     "deviceId": 'manual',
                                     "service": "Manual Booking",
                                     "nextDayDate": nextDayDate == true ? "1":"0",
-                                    "time": curTime == true ? _time + r.toString() : _time,
+                                    "time": _time,
                                     "time_take": user_choice_service,
                                     "customerImage": '',
                                     "customerName": customerName == "" ? "Manual" : customerName,
