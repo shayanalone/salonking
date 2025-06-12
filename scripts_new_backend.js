@@ -1203,8 +1203,8 @@ function renderBookings(bookings, gridId , sort ) {
                                 if (dateA > dateB) return 1;
 
                                 // If dates are equal, compare times
-                                const timeA = timeToMinutes(a.time.substring(0, a.time.indexOf(" "))); // Assuming space separates time and AM/PM
-                                const timeB = timeToMinutes(b.time.substring(0, b.time.indexOf(" "))); // Fixed 'a.time' to 'b.time'
+                                const timeA = timeToMinutes(a.time.substring(0, a.time.indexOf("s"))); // Assuming space separates time and AM/PM
+                                const timeB = timeToMinutes(b.time.substring(0, b.time.indexOf("s"))); // Fixed 'a.time' to 'b.time'
                                 return timeA - timeB;
                             })
                             : [...bookings].reverse();
@@ -1219,7 +1219,7 @@ function renderBookings(bookings, gridId , sort ) {
                 card.innerHTML = `
                     <p style="margin-left: 5px; margin-top: 5px; font-size: 82%;"><strong>Name:</strong> ${booking.customerName}${booking.customerName=="Manual" ? "" : " - Manual"}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Date:</strong> ${formatDate(booking.date)}</p>
-                    <p style="margin-left: 5px; font-size: 82%;"><strong>Time:</strong> ${booking.time.substring(0, booking.time.indexOf("s"))} - ${minutesToTime(timeToMinutes(booking.time) + booking.time_take)}</p>
+                    <p style="margin-left: 5px; font-size: 82%;"><strong>Time:</strong> ${booking.time.substring(0, booking.time.indexOf("s"))} - ${minutesToTime(timeToMinutes(booking.time.substring(0, booking.time.indexOf("s"))) + booking.time_take)}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Time Taken:</strong> ${booking.time_take}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Code:</strong> ${booking.code}</p>
                     <p style="margin-left: 5px; margin-bottom: 5px;font-size: 82%;"><strong>Seat:</strong> ${booking.time.substring(booking.time.indexOf("s") + 1)}</p>
@@ -1234,7 +1234,7 @@ function renderBookings(bookings, gridId , sort ) {
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Service:</strong> ${booking.service}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Price:</strong> ${booking.price}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Date:</strong> ${formatDate(booking.date)}</p>
-                    <p style="margin-left: 5px; font-size: 82%;"><strong>Time:</strong> ${booking.time.substring(0, booking.time.indexOf("s"))} - ${minutesToTime(timeToMinutes(booking.time) + booking.time_take)}</p>
+                    <p style="margin-left: 5px; font-size: 82%;"><strong>Time:</strong> ${booking.time.substring(0, booking.time.indexOf("s"))} - ${minutesToTime(timeToMinutes(booking.time.substring(0, booking.time.indexOf("s"))) + booking.time_take)}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Time Taken:</strong> ${booking.time_take}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Code:</strong> ${booking.code}</p>
                     <p style="margin-left: 5px; margin-bottom: 5px;font-size: 82%;"><strong>Seat:</strong> ${booking.time.substring(booking.time.indexOf("s") + 1)}</p>
@@ -1293,7 +1293,7 @@ async function renderUserBookings(bookings) {
                     <p style="margin-left: 10px;  font-size: 80%;"> <strong>Service:</strong> ${booking.service}</p>
                     <p style="margin-left: 10px;  font-size: 80%;"> <strong>Price:</strong> ${booking.price}</p>
                     <p style="margin-left: 10px;  font-size: 80%;"> <strong>Booked Date:</strong> ${formatDate(booking.date)}</p>
-                    <p style="margin-left: 10px;  font-size: 80%;"> <strong>Booked Time:</strong> ${booking.time.substring(0, booking.time.indexOf("s"))}, Done at: ${minutesToTime(timeToMinutes(booking.time) + booking.time_take)} </p>
+                    <p style="margin-left: 10px;  font-size: 80%;"> <strong>Booked Time:</strong> ${booking.time.substring(0, booking.time.indexOf("s"))}, Done at: ${minutesToTime(timeToMinutes(booking.time.substring(0, booking.time.indexOf("s"))) + booking.time_take)} </p>
                     <p style="margin-left: 10px;  font-size: 80%;"> <strong>Seat:</strong> ${booking.time.substring(booking.time.indexOf("s") + 1)}</p>
                     <button class="btn" onclick="cancelBooking('${booking.code}')">Cancel This Booking</button>
                     </div>
@@ -2162,7 +2162,7 @@ async function manualBook() {
                                     "deviceId": 'manual',
                                     "service": "Manual Booking",
                                     "nextDayDate": nextDayDate == true ? "1":"0",
-                                    "time": _time,
+                                    "time": curTime == true ? _time + r.toString() : _time,
                                     "time_take": user_choice_service,
                                     "customerImage": '',
                                     "customerName": customerName == "" ? "Manual" : customerName,
