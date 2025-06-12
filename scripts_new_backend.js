@@ -1738,7 +1738,7 @@ async function Init_UserBooking_Times() {
 
         let hasAvailableSlots = false;
         let over24Hourse = startMinutes < closeMinutes;
-
+        let past_booked_time = "";
         while ((isOverTime == false && startMinutes < closeMinutes)
             || (isOverTime == true && ((over24Hourse == false && startMinutes < 1445) || (over24Hourse == true && startMinutes < closeMinutes)))) {
             const timeStr = minutesToTime(startMinutes);
@@ -1790,10 +1790,23 @@ async function Init_UserBooking_Times() {
                     return serviceEnd > breakStart && startMinutes < breakEnd;
                 });
 
+            if(Booked_Count >= salon.SeatCount){
+                if(past_booked_time == ""){
+                    past_booked_time = timeStr;
+                }
+            }
+            else if(past_booked_time != ""){
+                const option = document.createElement('option');
+                option.value = "";
+                option.disabled = true;
+                option.textContent = `${removeLeadingZero(past_booked_time.split(' ').join('').toLowerCase())} - ${removeLeadingZero(timeStr.split(' ').join('').toLowerCase())} : Booked`;
+                timeSelect.appendChild(option);
+                past_booked_time = "";
+            }
             if (!isBreak && isSlotAvailable && fitsSchedule && maxBookedSeats < salon.SeatCount && Booked_Count < salon.SeatCount) {
                 const option = document.createElement('option');
                 option.value = timeStr + "s" + (Booked_Count + 1);
-                option.textContent = `${timeStr} : Seats (${Booked_Count}/${salon.SeatCount})`;
+                option.textContent = `${removeLeadingZero(timeStr)} : Seats (${Booked_Count}/${salon.SeatCount})`;
                 timeSelect.appendChild(option);
                 hasAvailableSlots = true;
             }
@@ -1864,7 +1877,7 @@ async function Init_ManualBooking_Times() {
         let hasAvailableSlots = false;
 
         let over24Hourse = startMinutes < closeMinutes;
-
+        let past_booked_time = "";
         while ((isOverTime == false && startMinutes < closeMinutes)
             || (isOverTime == true && ((over24Hourse == false && startMinutes < 1445) || (over24Hourse == true && startMinutes < closeMinutes)))) {
             const timeStr = minutesToTime(startMinutes);
@@ -1916,10 +1929,24 @@ async function Init_ManualBooking_Times() {
                     return serviceEnd > breakStart && startMinutes < breakEnd;
                 });
 
+            if(Booked_Count >= your_salon.SeatCount){
+                if(past_booked_time == ""){
+                    past_booked_time = timeStr;
+                }
+            }
+            else if(past_booked_time != ""){
+                const option = document.createElement('option');
+                option.value = "";
+                option.disabled = true;
+                option.textContent = `${removeLeadingZero(past_booked_time.split(' ').join('').toLowerCase())} - ${removeLeadingZero(timeStr.split(' ').join('').toLowerCase())} : Booked`;
+                timeSelect.appendChild(option);
+                past_booked_time = "";
+            }
+
             if (!isBreak && isSlotAvailable && fitsSchedule && maxBookedSeats < your_salon.SeatCount && Booked_Count < your_salon.SeatCount) {
                 const option = document.createElement('option');
                 option.value = timeStr + "s" + (Booked_Count + 1);
-                option.textContent = `${timeStr} : Seats (${Booked_Count}/${your_salon.SeatCount})`;
+                option.textContent = `${removeLeadingZero(timeStr)} : Seats (${Booked_Count}/${your_salon.SeatCount})`;
                 timeSelect.appendChild(option);
                 hasAvailableSlots = true;
             }
@@ -2427,4 +2454,8 @@ function formatDate(dateStr) {
     let month = date.toLocaleString('en-US', { month: 'long' });
     let year = date.getFullYear();
     return `${day}-${month}-${year}`;
+}
+function removeLeadingZero(timeStr) {
+    // Replace leading zero in the hour part
+    return timeStr.replace(/^0(\d):/, '$1:');
 }
