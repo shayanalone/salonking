@@ -225,7 +225,7 @@ async function showSection(sectionId, salonName, ownerName, location) {
         document.getElementById('booking-salon-name').textContent = salonName;
         document.getElementById('booking-owner-name').innerHTML = `<strong>Owner:</strong> ${ownerName}`;
         document.getElementById('booking-location').innerHTML = `<strong style="font-size: 100%; line-height: 17px;">Location:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}" target="_blank" style="font-size: 100%;  color: rgb(0, 157, 255);">${location}</a>`;
-        document.getElementById('booking-salon-discounts').textContent = salon.WholeServiceDiscounting > 0 ? `Discount: ${salon.WholeServiceDiscounting} PKR saab services mai` : "";
+        document.getElementById('booking-salon-discounts').textContent = salon.WholeServiceDiscounting > 0 ? `Discount ${salon.WholeServiceDiscounting} pkr saab services mai` : "";
         document.getElementById('booking-owner-number').innerHTML = `<strong>Owner Number:</strong> ${salon.ownerNumber}`;
         const serviceSelect = document.getElementById('booking-service');
         if (serviceSelect) {
@@ -339,7 +339,7 @@ async function renderSalons(signal) {
             const card = document.createElement('div');
             card.className = 'salon-card';
             card.innerHTML = `
-            ${salon.WholeServiceDiscounting > 0 ? `<h3 style="height: 28px; text-align: center; padding-top: 2px; background-color:rgb(255, 255, 255); border-radius: 4px; font-size: 92%; color:rgb(255, 69, 69);">Discount: ${salon.WholeServiceDiscounting} PKR saab services mai</h3>` : ""}
+            ${salon.WholeServiceDiscounting > 0 ? `<h3 style="height: 28px; text-align: center; padding-top: 3px; background-color:rgb(255, 255, 255); border-radius: 4px; font-size: 95%; color:rgb(255, 69, 69);">Discount ${salon.WholeServiceDiscounting} pkr saab services mai</h3>` : ""}
                 <div class="slider" data-slider-id="${sliderId}">
                     <div class="slides" id="${sliderId}">
                         ${images.map(() => `<div class="slide" style="background-image: url('${placeholderImage}')"></div>`).join('')}
@@ -348,7 +348,9 @@ async function renderSalons(signal) {
                     <button class="slider-btn next" onclick="moveSlide('${sliderId}', 1)">❯</button>
                 </div>
                 <div class="details">
+                    <div style="height: 10px;"></div>
                     <h3 style="font-size: 100%;  margin-top: 10px;">${salon.salonName}</h3>
+                    <div style="height: 3px;"></div>
                     <p style="font-size: 82%; margin-top: -8px;"><strong>Owner:</strong> ${salon.ownerName}</p>
                     <p style="font-size: 82%; margin-top: -10px;"><strong>Opened:</strong> ${`${convertTo12HourFormat(salon.openTime) || 'N/A'} - ${convertTo12HourFormat(salon.closeTime) || 'N/A'}`}</p>
                     <p class="location" style="margin-left: 1px; margin-bottom: -5px; margin-top: -5px; line-height: 17px;"><strong style="font-size: 90%;">Location:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salon.location)}" target="_blank" style="font-size: 90%;  color: rgb(0, 157, 255);">${salon.location}</a></p>
@@ -1210,7 +1212,7 @@ function renderBookings(bookings, gridId , sort ) {
                             })
                             : [...bookings].reverse();
 
-        let index = 0;
+        let index = 1;
         sortedBookings.forEach(booking => {
             const card = document.createElement('div');
             card.className = 'booking-card';
@@ -1218,6 +1220,11 @@ function renderBookings(bookings, gridId , sort ) {
             // ${booking.status === 'pending' && index === 0 ? "<h4>Your Next Customer</h4><hr>" : ""}
             if(booking.deviceId == "manual"){
                 card.innerHTML = `
+                    <div style="height: 5px;"></div>
+                    <p style="font-size: 85%; text-align: center;">Booking ${index}</p>
+                    <div style="height: 5px;"></div>
+                    <hr>
+                    <div style="height: 8px;"></div>
                     <p style="margin-left: 5px; margin-top: 5px; font-size: 82%;"><strong>Name:</strong> ${booking.customerName}${booking.customerName=="Manual" ? "" : " - Manual"}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Date:</strong> ${formatDate(booking.date)}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Time:</strong> ${booking.time.substring(0, booking.time.indexOf("s"))} - ${minutesToTime(timeToMinutes(booking.time.substring(0, booking.time.indexOf("s"))) + booking.time_take)}</p>
@@ -1226,9 +1233,15 @@ function renderBookings(bookings, gridId , sort ) {
                     <p style="margin-left: 5px; margin-bottom: 5px;font-size: 82%;"><strong>Seat:</strong> ${booking.time.substring(booking.time.indexOf("s") + 1)}</p>
                     ${booking.status === 'pending' ? `<button class="btn" onclick="dash_cancelBooking('${booking.code}')">Cancel This Booking</button>
                     <button class="btn" onclick="dash_Complete_Customer('${booking.code}')">Complete This Booking</button>` : ``}
-                `;
+                    <hr>
+                    `;
             }else{
                 card.innerHTML = `
+                    <div style="height: 5px;"></div>
+                    <p style="font-size: 85%; text-align: center;">Booking ${index}</p>
+                    <div style="height: 5px;"></div>
+                    <hr>
+                    <div style="height: 8px;"></div>
                     ${booking.status === 'user canceled' ? `<strong>Canceled by User</strong>` : ""}
                     <p style="margin-left: 5px; margin-top: 5px; font-size: 82%;"><strong>Name:</strong> ${booking.customerName}</p>
                     <p style="margin-left: 5px; font-size: 82%;"><strong>Number:</strong> ${booking.customerNumber}</p>
@@ -2101,6 +2114,10 @@ async function manualBook() {
 
     // Validate input
     if (!time_take) {
+        setError("manual-dashboard-error" , 'Please enter how much time the service takes.');
+        return;
+    }
+    if (time_take == 0) {
         setError("manual-dashboard-error" , 'Please enter how much time the service takes.');
         return;
     }
