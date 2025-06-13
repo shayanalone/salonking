@@ -419,6 +419,10 @@ header {
     overflow-y: auto;
     padding: 0.5rem;
     appearance: none;
+    background-image: url("https://unpkg.com/heroicons@2.1.5/24/solid/chevron-down.svg");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 13px;
 }
 
 .form-container .btn {
