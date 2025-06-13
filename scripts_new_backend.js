@@ -351,8 +351,9 @@ async function renderSalons(signal) {
                     <h3 style="font-size: 100%;  margin-top: 10px;">${salon.salonName}</h3>
                     <p style="font-size: 82%; margin-top: -8px;"><strong>Owner:</strong> ${salon.ownerName}</p>
                     <p style="font-size: 82%; margin-top: -10px;"><strong>Opened:</strong> ${`${convertTo12HourFormat(salon.openTime) || 'N/A'} - ${convertTo12HourFormat(salon.closeTime) || 'N/A'}`}</p>
-                    <p class="location" style="margin-left: 1px; margin-bottom: -5px; margin-top: -5px; line-height: 17px;"><strong style="font-size: 85%;">Location:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salon.location)}" target="_blank" style="font-size: 80%;  color: rgb(0, 157, 255);">${salon.location}</a></p>
+                    <p class="location" style="margin-left: 1px; margin-bottom: -5px; margin-top: -5px; line-height: 17px;"><strong style="font-size: 90%;">Location:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salon.location)}" target="_blank" style="font-size: 90%;  color: rgb(0, 157, 255);">${salon.location}</a></p>
                     </div>
+                    <div style="height: 8px;"> </div>
                     <button class="btn" onclick="debounceShowSection('user-booking', '${salon.salonName}', '${salon.ownerName}', '${salon.location}')">Book Now</button>
                     `;
                     
