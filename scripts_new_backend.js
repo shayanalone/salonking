@@ -236,7 +236,7 @@ async function showSection(sectionId, salonName, ownerName, location) {
                     const discountedPrice = service.discounted_price || 0;
                     const wholeDiscount = salon.WholeServiceDiscounting || 0;
                     let finalPrice = service.price;
-                    let displayText = `${service.name} | Price ${service.price} | ${service.time} min`;
+                    let displayText = `${service.name} | Price ${service.price} | ${formatMinute(service.time)}`;
                     if (discountedPrice > 0 || wholeDiscount > 0) {
                         if (discountedPrice > 0) {
                             finalPrice = Math.min(finalPrice, discountedPrice);
@@ -247,7 +247,7 @@ async function showSection(sectionId, salonName, ownerName, location) {
                         finalPrice = Math.max(0, Math.min(service.price, finalPrice));
                         if (finalPrice < service.price) {
                             const discountPercentage = Math.round(((service.price - finalPrice) / service.price) * 100);
-                            displayText = `${service.name} | Price ${finalPrice} | ${discountPercentage}% off | ${service.time} min`;
+                            displayText = `${service.name} | Price ${finalPrice} | ${discountPercentage}% off | ${formatMinute(service.time)}`;
                         }
                     }
                     option.value = service.name + 'p' + finalPrice;
@@ -339,7 +339,7 @@ async function renderSalons(signal) {
             const card = document.createElement('div');
             card.className = 'salon-card';
             card.innerHTML = `
-            ${salon.WholeServiceDiscounting > 0 ? `<h3 style="height: 28px; text-align: center; padding-top: 3px; background-color:rgb(255, 255, 255); border-radius: 4px; font-size: 95%; color:rgb(255, 69, 69);">Discount ${salon.WholeServiceDiscounting} pkr saab services mai</h3>` : ""}
+            ${salon.WholeServiceDiscounting > 0 ? `<h3 style="height: 28px; text-align: center; padding-top: 3px; margin-top: 0px; background-color:rgb(255, 255, 255); border-radius: 4px; font-size: 95%; color:rgb(255, 69, 69);">Discount ${salon.WholeServiceDiscounting} pkr saab services mai</h3>` : ""}
                 <div class="slider" data-slider-id="${sliderId}">
                     <div class="slides" id="${sliderId}">
                         ${images.map(() => `<div class="slide" style="background-image: url('${placeholderImage}')"></div>`).join('')}
@@ -488,19 +488,29 @@ async function showDashboard() {
         
         const pending = salonBooking.filter(b => b.status === 'pending');
         const completed = salonBooking.filter(b => b.status === 'completed');
-        const canceled = salonBooking.filter(b => b.status === 'user canceled' || b.status === 'dash canceled');
         const manualBookings = completed.filter(b => b.deviceId == 'manual');
+        const canceled = salonBooking.filter(b => b.status === 'user canceled' || b.status === 'dash canceled');
+        const can_manualBookings = canceled.filter(b => b.deviceId == 'manual');
 
         const pendingBookings = document.getElementById('pending-bookings');
         const totalBookings = document.getElementById('total-bookings');
+
         const CanceledBooking = document.getElementById('canceled-bookings');
+        
         const CompletedBooking = document.getElementById('completed-bookings');
         const ByWebBooking = document.getElementById('online-bookings');
         const ManualBooking = document.getElementById('manual-bookings');
 
         if (pendingBookings) pendingBookings.textContent = pending.length;
         if (totalBookings) totalBookings.textContent = salonBooking.length;
+
+        const can_ByWebBooking = document.getElementById('online-cancel-bookings');
+        const can_ManualBooking = document.getElementById('manual-cancel-bookings');
+        
         if (CanceledBooking) CanceledBooking.textContent = canceled.length;
+        if (can_ByWebBooking) can_ByWebBooking.textContent = canceled.length - can_manualBookings.length;
+        if (can_ManualBooking) can_ManualBooking.textContent = can_manualBookings.length;
+
         if (CompletedBooking) CompletedBooking.textContent = completed.length;
         if (ByWebBooking) ByWebBooking.textContent = completed.length - manualBookings.length;
         if (ManualBooking) ManualBooking.textContent = manualBookings.length;
@@ -511,7 +521,7 @@ async function showDashboard() {
         for (let min = 0; min < 60*4; min += 5) {
             const option = document.createElement('option');
             option.value = min;
-            option.textContent = `${min} min`;
+            option.textContent = `${formatMinute(min)}`;
             if (min === 0) {
                 option.value = "";
                 option.defaultSelected = true;
@@ -557,22 +567,31 @@ async function showDashboard() {
                     
                     const pending = salonBooking.filter(b => b.status === 'pending');
                     const completed = salonBooking.filter(b => b.status === 'completed');
-                    const canceled = salonBooking.filter(b => b.status === 'user canceled' || b.status === 'dash canceled');
                     const manualBookings = completed.filter(b => b.deviceId == 'manual');
 
+                    const canceled = salonBooking.filter(b => b.status === 'user canceled' || b.status === 'dash canceled');
+                    
                     const pendingBookings = document.getElementById('pending-bookings');
                     const totalBookings = document.getElementById('total-bookings');
+
                     const CanceledBooking = document.getElementById('canceled-bookings');
+                    const can_ByWebBooking = document.getElementById('online-cancel-bookings');
+                    const can_ManualBooking = document.getElementById('manual-cancel-bookings');
+
                     const CompletedBooking = document.getElementById('completed-bookings');
                     const ByWebBooking = document.getElementById('online-bookings');
                     const ManualBooking = document.getElementById('manual-bookings');
 
                     if (pendingBookings) pendingBookings.textContent = pending.length;
                     if (totalBookings) totalBookings.textContent = salonBooking.length;
-                    if (CanceledBooking) CanceledBooking.textContent = canceled.length;
+                    
                     if (CompletedBooking) CompletedBooking.textContent = completed.length;
                     if (ByWebBooking) ByWebBooking.textContent = completed.length - manualBookings.length;
                     if (ManualBooking) ManualBooking.textContent = manualBookings.length;
+                    
+                    if (CanceledBooking) CanceledBooking.textContent = canceled.length;
+                    if (can_ByWebBooking) can_ByWebBooking.textContent = canceled.length - can_manualBookings.length;
+                    if (can_ManualBooking) can_ManualBooking.textContent = can_manualBookings.length;
 
                     renderBookings(pending, 'pending-bookings-grid' , true);
                     renderBookings(completed, 'completed-bookings-grid' , false);
@@ -1328,9 +1347,11 @@ async function renderUserBookings(bookings) {
                     <button class="slider-btn prev" onclick="moveSlide('${sliderId}', -1)">❮</button>
                     <button class="slider-btn next" onclick="moveSlide('${sliderId}', 1)">❯</button>
                 </div>
-                <p style="padding-left: 0.43rem; font-size: 85%;"><strong>Owner:</strong> ${salon.ownerName}</p>
-                <p style="padding-left: 0.43rem; font-size: 85%;"><strong>Owner Number:</strong> ${salon.ownerNumber}</p>
-                <p style="padding-left: 0.43rem; font-size: 85%;"><strong>Location:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salon.location)}" target="_blank" style="font-size: 90%;  color: rgb(0, 157, 255);">${salon.location}</a></p>
+                <p style="padding-left: 0.43rem; font-size: 80%;"><strong>Owner:</strong> ${salon.ownerName}</p>
+                <p style="padding-left: 0.43rem; font-size: 80%;"><strong>Owner Number:</strong> ${salon.ownerNumber}</p>
+                
+                <p style="padding-left: 0.43rem; font-size: 80%;"><strong>Location:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salon.location)}" target="_blank" style="font-size: 90%;  color: rgb(0, 157, 255);">${salon.location}</a></p>
+                <div style="height: 10px;"></div>
                 <hr>
                 <br>
                 ${bookingDetails}
@@ -1797,7 +1818,7 @@ async function Init_UserBooking_Times() {
             }
 
             // Check if the service duration fits within operating hours and breaks
-            const fitsSchedule = ((isOverTime && over24Hourse == false) || serviceEnd <= closeMinutes) &&
+            const fitsSchedule = ((isOverTime && over24Hourse == false) || serviceEnd <= closeMinutes + 60) &&
                 !breaks.some(b => {
                     const breakStart = timeToMinutes(b.from);
                     const breakEnd = timeToMinutes(b.to);
@@ -2476,4 +2497,17 @@ function formatDate(dateStr) {
 function removeLeadingZero(timeStr) {
     // Replace leading zero in the hour part
     return timeStr.replace(/^0(\d):/, '$1:');
+}
+function formatMinute(minutes) {
+    if (minutes < 60) {
+        return minutes + " min";
+    } else {
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+        if (remainingMinutes === 0) {
+            return hours + " hrs";
+        } else {
+            return hours + " hrs " + (remainingMinutes < 10 ? "0" : "") + remainingMinutes + " min";
+        }
+    }
 }

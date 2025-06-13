@@ -319,16 +319,22 @@
                     </div>
                     <div class="salon-card">
                         <h3>Booking Stats</h3>
-                        <div class="details">
-                            <p style="font-size: 80%;"><strong>Pending Bookings :</strong> <span id="pending-bookings">0</span></p>
+                        <hr>
+                        <div class="details" style="padding-left: 10px;">
+                            <div style="height: 5px;"></div>
+                            <p style="font-size: 80%;"><strong>Pending Bookings: </strong> <span id="pending-bookings">0</span></p>
 
-                            <div style="height: 15px;"></div>
-
+                            <div style="height: 10px;"></div>
+                            
                             <p><strong>Total Bookings:</strong> <span id="total-bookings">0</span></p>
-                            <p><strong>Canceled Bookings:</strong> <span id="canceled-bookings">0</span></p>
-                            <p><strong>Completed Bookings:</strong> <span id="completed-bookings">0</span></p>
-                            <p style="padding-left: 10px;"><strong>By Web Bookings:</strong> <span id="online-bookings">0</span></p>
-                            <p style="padding-left: 10px;"><strong>By Manual Bookings:</strong> <span id="manual-bookings">0</span></p>
+                            <p style="padding-left: 20px;"><strong>| Canceled Bookings:</strong> <span id="canceled-bookings">0</span></p>
+                                <p style="padding-left: 40px;"><strong>| By Online:</strong> <span id="online-cancel-bookings">0</span></p>
+                                <p style="padding-left: 40px;"><strong>| By Manual:</strong> <span id="manual-cancel-bookings">0</span></p>
+
+                            <div style="height: 8px;"></div>
+                            <p style="padding-left: 20px;"><strong>| Total Completed Bookings:</strong> <span id="completed-bookings">0</span></p>
+                                <p style="padding-left: 40px;"><strong>| By Online:</strong> <span id="online-bookings">0</span></p>
+                                <p style="padding-left: 40px;"><strong>| By Manual:</strong> <span id="manual-bookings">0</span></p>
                         </div>
                     </div>
                 </div>
@@ -371,14 +377,14 @@
                 </div>
 
                 <h2>Pending Bookings</h2>
-                <div id="pending-bookings-grid" class="dashboard-grid" style="box-shadow: 0px 0px 5px 2px rgb(255, 255, 255);"></div>
+                <div id="pending-bookings-grid" class="dashboard-grid" style="box-shadow: 0px 0px 5px 2px rgb(255, 255, 255); padding: 0px;"></div>
                 <br>
                 <h2>Completed Bookings</h2>
-                <div id="completed-bookings-grid" class="dashboard-grid" style="box-shadow: 0px 0px 5px 2px rgb(0, 255, 13);"></div>
+                <div id="completed-bookings-grid" class="dashboard-grid" style="box-shadow: 0px 0px 5px 2px rgb(0, 255, 13); padding: 0px;"></div>
                 <br>
 
                 <h2>Canceled Bookings</h2>
-                <div id="canceled-bookings-grid" class="dashboard-grid" style="box-shadow: 0px 0px 5px 2px rgba(255, 0, 0, 1);"></div>
+                <div id="canceled-bookings-grid" class="dashboard-grid" style="box-shadow: 0px 0px 5px 2px rgba(255, 0, 0, 1); padding: 0px;"></div>
             </div>
         </div>
     </div>
