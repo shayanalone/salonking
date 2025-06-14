@@ -331,7 +331,7 @@ async function renderSalons(signal) {
 
         // Render cards with placeholders
         salons.forEach((salon, index) => {
-            const sliderId = `salon-${index}`;
+            const sliderId = `salon-${index}`; 
             const images = salon.salonImages?.length > 0 ? salon.salonImages : defaultSalonImages;
             // const nextAvailable = getNextAvailableTime(salon.openTime, salon.breaks);
             // ${salon.WholeServiceDiscounting > 0 ? `<h3 style="padding-left: 5px; background-color:rgb(255, 255, 255); border-radius: 4px; font-size: 105%; margin-top: 0px;color:rgb(255, 101, 101);">Discount: ${salon.WholeServiceDiscounting} PKR wo bhi </h3>` : ""}
@@ -487,25 +487,28 @@ async function showDashboard() {
         const salonBooking = await GetSalonBooking(your_salon.salonId , your_salon.salonName , salon_password , salon_Index , signal) || [];
         
         const pending = salonBooking.filter(b => b.status === 'pending');
+        const pending_user = pending.filter(b => b.deviceId != 'manual');
         const completed = salonBooking.filter(b => b.status === 'completed');
         const manualBookings = completed.filter(b => b.deviceId == 'manual');
         const canceled = salonBooking.filter(b => b.status === 'user canceled' || b.status === 'dash canceled');
         const can_manualBookings = canceled.filter(b => b.deviceId == 'manual');
 
+        
         const pendingBookings = document.getElementById('pending-bookings');
         const totalBookings = document.getElementById('total-bookings');
-
+        
         const CanceledBooking = document.getElementById('canceled-bookings');
+        const can_ByWebBooking = document.getElementById('online-cancel-bookings');
+        const can_ManualBooking = document.getElementById('manual-cancel-bookings');
         
         const CompletedBooking = document.getElementById('completed-bookings');
         const ByWebBooking = document.getElementById('online-bookings');
         const ManualBooking = document.getElementById('manual-bookings');
 
+
         if (pendingBookings) pendingBookings.textContent = pending.length;
         if (totalBookings) totalBookings.textContent = salonBooking.length;
 
-        const can_ByWebBooking = document.getElementById('online-cancel-bookings');
-        const can_ManualBooking = document.getElementById('manual-cancel-bookings');
         
         if (CanceledBooking) CanceledBooking.textContent = canceled.length;
         if (can_ByWebBooking) can_ByWebBooking.textContent = canceled.length - can_manualBookings.length;
@@ -515,6 +518,22 @@ async function showDashboard() {
         if (ByWebBooking) ByWebBooking.textContent = completed.length - manualBookings.length;
         if (ManualBooking) ManualBooking.textContent = manualBookings.length;
 
+        if(pending_user.length > parseInt(localStorage.getItem("before_pending_booking_count") , 10)){
+            const sound = document.getElementById('newBooking_notify');
+            sound.play().catch(error => {
+                console.error('Error playing sound:', error);
+            });
+            console.log("newBooking_notify");
+        }
+        if((canceled.length - can_manualBookings.length) > parseInt(localStorage.getItem("before_userCancel_booking_count") , 10)){
+            const sound = document.getElementById('anyUserCancelBooking_notify');
+            sound.play().catch(error => {
+                console.error('Error playing sound:', error);
+            });
+            console.log("anyUserCancelBooking_notify");
+        }
+        localStorage.setItem("before_pending_booking_count" , pending_user.length);
+        localStorage.setItem("before_userCancel_booking_count" , (canceled.length - can_manualBookings.length));
         
         const timeTakenSelect = document.getElementById('manualBooking-timeTake');
         timeTakenSelect.innerHTML = '';
@@ -531,9 +550,9 @@ async function showDashboard() {
         }
         Init_ManualBooking_Times();
         
-        renderBookings(pending, 'pending-bookings-grid' , true);
-        renderBookings(completed, 'completed-bookings-grid' , false);
-        renderBookings(canceled, 'canceled-bookings-grid' , false);
+        renderBookings(pending, 'pending-bookings-grid' , true , "pending-before");
+        renderBookings(completed, 'completed-bookings-grid' , false , "completed-before");
+        renderBookings(canceled, 'canceled-bookings-grid' , false , "canceled-before");
 
         const imageslider = document.getElementById('dash-slide-images');
         const placeholderImage = 'https://images.unsplash.com/photo-1749460264120-2219bc64be40?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwcm9maWxlLXBhZ2V8MXx8fGVufDB8fHx8fA%3D%3D'; // Fallback image URL
@@ -566,36 +585,45 @@ async function showDashboard() {
                     const salonBooking = await GetSalonBooking(your_salon.salonId , your_salon.salonName , salon_password , salon_Index , signal) || [];
                     
                     const pending = salonBooking.filter(b => b.status === 'pending');
+                    const pending_user = pending.filter(b => b.deviceId != 'manual');
                     const completed = salonBooking.filter(b => b.status === 'completed');
                     const manualBookings = completed.filter(b => b.deviceId == 'manual');
-
                     const canceled = salonBooking.filter(b => b.status === 'user canceled' || b.status === 'dash canceled');
-                    
-                    const pendingBookings = document.getElementById('pending-bookings');
-                    const totalBookings = document.getElementById('total-bookings');
+                    const can_manualBookings = canceled.filter(b => b.deviceId == 'manual');
 
-                    const CanceledBooking = document.getElementById('canceled-bookings');
-                    const can_ByWebBooking = document.getElementById('online-cancel-bookings');
-                    const can_ManualBooking = document.getElementById('manual-cancel-bookings');
-
-                    const CompletedBooking = document.getElementById('completed-bookings');
-                    const ByWebBooking = document.getElementById('online-bookings');
-                    const ManualBooking = document.getElementById('manual-bookings');
 
                     if (pendingBookings) pendingBookings.textContent = pending.length;
                     if (totalBookings) totalBookings.textContent = salonBooking.length;
-                    
-                    if (CompletedBooking) CompletedBooking.textContent = completed.length;
-                    if (ByWebBooking) ByWebBooking.textContent = completed.length - manualBookings.length;
-                    if (ManualBooking) ManualBooking.textContent = manualBookings.length;
+
                     
                     if (CanceledBooking) CanceledBooking.textContent = canceled.length;
                     if (can_ByWebBooking) can_ByWebBooking.textContent = canceled.length - can_manualBookings.length;
                     if (can_ManualBooking) can_ManualBooking.textContent = can_manualBookings.length;
 
-                    renderBookings(pending, 'pending-bookings-grid' , true);
-                    renderBookings(completed, 'completed-bookings-grid' , false);
-                    renderBookings(canceled, 'canceled-bookings-grid' , false);
+                    if (CompletedBooking) CompletedBooking.textContent = completed.length;
+                    if (ByWebBooking) ByWebBooking.textContent = completed.length - manualBookings.length;
+                    if (ManualBooking) ManualBooking.textContent = manualBookings.length;
+
+                    if(pending_user.length > parseInt(localStorage.getItem("before_pending_booking_count") , 10)){
+                        const sound = document.getElementById('newBooking_notify');
+                        sound.play().catch(error => {
+                            console.error('Error playing sound:', error);
+                        });
+                        console.log("newBooking_notify");
+                    }
+                    if((canceled.length - can_manualBookings.length) > parseInt(localStorage.getItem("before_userCancel_booking_count") , 10)){
+                        const sound = document.getElementById('anyUserCancelBooking_notify');
+                        sound.play().catch(error => {
+                            console.error('Error playing sound:', error);
+                        });
+                        console.log("anyUserCancelBooking_notify");
+                    }
+                    localStorage.setItem("before_pending_booking_count" , pending_user.length);
+                    localStorage.setItem("before_userCancel_booking_count" , (canceled.length - can_manualBookings.length));
+        
+                    renderBookings(pending, 'pending-bookings-grid' , true , "pending-before");
+                    renderBookings(completed, 'completed-bookings-grid' , false , "completed-before");
+                    renderBookings(canceled, 'canceled-bookings-grid' , false , "canceled-before");
                 }
             }, 10000);
         }
@@ -1206,8 +1234,8 @@ function convertTo12HourFormat(time24) {
 
     return `${hour}:${minute} ${ampm}`;
 }
-
-function renderBookings(bookings, gridId , sort ) {
+let removeNewBooking_list = [];
+function renderBookings(bookings, gridId , sort , storage_Address) {
     const grid = document.getElementById(gridId);
     if (!grid) return;
     const clearLoading = showLoadingAnimation(grid);
@@ -1231,16 +1259,31 @@ function renderBookings(bookings, gridId , sort ) {
                             })
                             : [...bookings].reverse();
 
+        let list = JSON.parse(localStorage.getItem(storage_Address) || "[]");
+        // add new number
+
         let index = 1;
+        let newBookingAvail = false
         sortedBookings.forEach(booking => {
             const card = document.createElement('div');
             card.className = 'booking-card';
+            let newBooking = false;
+            if (list.includes(booking.code)) {
+                newBooking = false;
+            } else {
+                newBooking = true;
+                if(removeNewBooking_list.includes(booking.code)){
+                    list.push(booking.code);
+                    removeNewBooking_list.splice( removeNewBooking_list.indexOf(booking.code) , 1);
+                }else{
+                    removeNewBooking_list.push(booking.code);
+                }
+            }
 
-            // ${booking.status === 'pending' && index === 0 ? "<h4>Your Next Customer</h4><hr>" : ""}
             if(booking.deviceId == "manual"){
                 card.innerHTML = `
                     <div style="height: 5px;"></div>
-                    <p style="font-size: 85%; text-align: center;">Booking ${index}</p>
+                    <p style="font-size: 85%; text-align: center;">Booking ${index}<strong style="color: red;">${newBooking == true ? (storage_Address.includes("pend") ? " - Naya Booking" : " - New Added") : ""}</strong></p>
                     <div style="height: 5px;"></div>
                     <hr>
                     <div style="height: 8px;"></div>
@@ -1257,7 +1300,7 @@ function renderBookings(bookings, gridId , sort ) {
             }else{
                 card.innerHTML = `
                     <div style="height: 5px;"></div>
-                    <p style="font-size: 85%; text-align: center;">Booking ${index}</p>
+                    <p style="font-size: 85%; text-align: center;">Booking ${index}<strong style="color: red;">${newBooking == true ? (storage_Address.includes("pend") ? " - Naya Booking" : " - New Added") : ""}</strong></p>
                     <div style="height: 5px;"></div>
                     <hr>
                     <div style="height: 8px;"></div>
@@ -1279,6 +1322,9 @@ function renderBookings(bookings, gridId , sort ) {
             grid.appendChild(card);
             index += 1;
         });
+        
+        localStorage.setItem(storage_Address, JSON.stringify(list));
+
     } catch (e) {
         clearLoading();
         grid.innerHTML = '<p style="text-align: center; color: red;">Error loading bookings. Please try again.</p>';
@@ -2201,7 +2247,7 @@ async function manualBook() {
                                     "deviceId": 'manual',
                                     "service": "Manual Booking",
                                     "nextDayDate": nextDayDate == true ? "1":"0",
-                                    "time": curTime == true ? _time + r.toString() : _time,
+                                    "time": curTime == true ? _time : _time,
                                     "time_take": user_choice_service,
                                     "customerImage": '',
                                     "customerName": customerName == "" ? "Manual" : customerName,
