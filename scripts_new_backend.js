@@ -183,6 +183,7 @@ async function showSection(sectionId, salonName, ownerName, location) {
     // Handle back button visibility
     const backBtn = document.getElementById('back-btn');
     if (sectionId === 'home') {
+        // PauseAllGuidaneAudio();
         backBtn.classList.remove('visible');
         await renderSalons(signal);
     } else {
@@ -227,6 +228,7 @@ async function showSection(sectionId, salonName, ownerName, location) {
         document.getElementById('booking-location').innerHTML = `<strong style="font-size: 100%; line-height: 17px;">Location:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}" target="_blank" style="font-size: 100%;  color: rgb(0, 157, 255);">${location}</a>`;
         document.getElementById('booking-salon-discounts').textContent = salon.WholeServiceDiscounting > 0 ? `Discount ${salon.WholeServiceDiscounting} pkr saab services mai` : "";
         document.getElementById('booking-owner-number').innerHTML = `<strong>Owner Number:</strong> ${salon.ownerNumber}`;
+        NextStep(1);
         const serviceSelect = document.getElementById('booking-service');
         if (serviceSelect) {
             serviceSelect.innerHTML = '<option value="">Select Service</option>';
@@ -268,7 +270,87 @@ async function showSection(sectionId, salonName, ownerName, location) {
         initSlider('booking-salon');
     }
 }
-// 
+// Assistane 
+let isAssistane = false;
+toggleAssistane();
+
+function toggleAssistane(){
+    isAssistane = !isAssistane;
+    const btn = document.getElementById("assistane-btn");
+    btn.style.backgroundImage = isAssistane
+    ? 'url("Active_Icon.png")'
+    : 'url("Mute_Icon.png")';
+    console.log(isAssistane);
+}
+// User Booking
+function NextStep(stepId){
+    PauseAllGuidaneAudio();
+    if(stepId == 1){
+        const customerName = document.getElementById('customer-name')?.value.trim();
+        if (!customerName) {
+            PlayGuidaneAudio("Guide_Name")
+        }
+    }
+    if(stepId == 2){
+        const customerName = document.getElementById('customer-name')?.value.trim();
+        if (!customerName) {
+            PlayGuidaneAudio("Guide_None_Name");
+            setError('booking-error', 'Please add your Name.');
+            return;
+        }
+        const customerNumber = document.getElementById('customer-number')?.value.trim();
+        if (!customerNumber) {
+            PlayGuidaneAudio("Guide_Number");
+        }
+    }
+    
+    if(stepId == 3){
+        const customerNumber = document.getElementById('customer-number')?.value.trim();
+        if (!customerNumber) {
+            PlayGuidaneAudio("Guide_None_Number");
+            setError('booking-error', 'Please add your Phone Number.');
+            return;
+        }
+        if (!isValidPakistaniPhoneNumber(customerNumber)) {
+            PlayGuidaneAudio("Guide_Wrong_Number");
+            setError('booking-error', 'Please enter a valid Pakistani phone number (e.g., 03001234567 or +923001234567).');
+            return;
+        }
+        PlayGuidaneAudio("Guide_Service_OR_Time");
+    }
+    
+    for (let i = 1; i <= 3; i++) {
+        const targetSection = document.getElementById("booking-salon-" + i);
+        targetSection.style.display = 'none'; // Make visible immediately
+    }
+    const targetSection = document.getElementById("booking-salon-" + stepId);
+    targetSection.style.display = 'block'; // Make visible immediately
+    
+
+    if(isAssistane){
+        console.log("Play Guiding: "+stepId);
+    }
+}
+
+function PlayGuidaneAudio(audioId) {
+    PauseAllGuidaneAudio();
+    if(!isAssistane){
+        return;
+    }
+    const sound = document.getElementById(audioId);
+    sound.play().catch(error => {
+        console.error('Error playing sound:', error);
+    });
+    console.log("Played: " + audioId);
+}
+function PauseAllGuidaneAudio(){
+    const audioElements = document.querySelectorAll('.UserGuidance');
+    audioElements.forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0; // Reset to start
+        console.log(`Stopped sound: ${audio.id}`);
+    });
+}
 
 // Function to validate Pakistani phone number
 function isValidPakistaniPhoneNumber(phone) {
@@ -339,7 +421,7 @@ async function renderSalons(signal) {
             const card = document.createElement('div');
             card.className = 'salon-card';
             card.innerHTML = `
-            ${salon.WholeServiceDiscounting > 0 ? `<h3 style="height: 28px; text-align: center; padding-top: 3px; margin-top: 0px; background-color:rgb(255, 255, 255); border-radius: 4px; font-size: 95%; color:rgb(255, 69, 69);">Discount ${salon.WholeServiceDiscounting} pkr saab services mai</h3>` : ""}
+            ${salon.WholeServiceDiscounting > 0 ? `<h3 style="height: 28px; text-align: center; padding-top: 3px; margin-top: 0px; background-color:rgb(255, 255, 255); border-radius: 4px; font-size: 98%; color:rgb(255, 69, 69);">Discount ${salon.WholeServiceDiscounting} pkr saab services mai</h3>` : ""}
                 <div class="slider" data-slider-id="${sliderId}">
                     <div class="slides" id="${sliderId}">
                         ${images.map(() => `<div class="slide" style="background-image: url('${placeholderImage}')"></div>`).join('')}
@@ -487,11 +569,12 @@ async function showDashboard() {
         const salonBooking = await GetSalonBooking(your_salon.salonId , your_salon.salonName , salon_password , salon_Index , signal) || [];
         
         const pending = salonBooking.filter(b => b.status === 'pending');
-        const pending_user = pending.filter(b => b.deviceId != 'manual');
+        const pending_user = pending.filter(b => b.deviceId !== 'manual');
         const completed = salonBooking.filter(b => b.status === 'completed');
-        const manualBookings = completed.filter(b => b.deviceId == 'manual');
+        const manualBookings = completed.filter(b => b.deviceId === 'manual');
         const canceled = salonBooking.filter(b => b.status === 'user canceled' || b.status === 'dash canceled');
-        const can_manualBookings = canceled.filter(b => b.deviceId == 'manual');
+        const canceled_user = canceled.filter(b => b.deviceId !== 'manual');
+        const can_manualBookings = canceled.filter(b => b.deviceId === 'manual');
 
         
         const pendingBookings = document.getElementById('pending-bookings');
@@ -520,20 +603,24 @@ async function showDashboard() {
 
         if(pending_user.length > parseInt(localStorage.getItem("before_pending_booking_count") , 10)){
             const sound = document.getElementById('newBooking_notify');
+            sound.pause();
+            sound.currentTime = 0;
             sound.play().catch(error => {
                 console.error('Error playing sound:', error);
             });
             console.log("newBooking_notify");
         }
-        if((canceled.length - can_manualBookings.length) > parseInt(localStorage.getItem("before_userCancel_booking_count") , 10)){
+        if(canceled_user.length > parseInt(localStorage.getItem("before_userCancel_booking_count") , 10)){
             const sound = document.getElementById('anyUserCancelBooking_notify');
+            sound.pause();
+            sound.currentTime = 0;
             sound.play().catch(error => {
                 console.error('Error playing sound:', error);
             });
             console.log("anyUserCancelBooking_notify");
         }
         localStorage.setItem("before_pending_booking_count" , pending_user.length);
-        localStorage.setItem("before_userCancel_booking_count" , (canceled.length - can_manualBookings.length));
+        localStorage.setItem("before_userCancel_booking_count" , canceled_user.length);
         
         const timeTakenSelect = document.getElementById('manualBooking-timeTake');
         timeTakenSelect.innerHTML = '';
@@ -585,11 +672,12 @@ async function showDashboard() {
                     const salonBooking = await GetSalonBooking(your_salon.salonId , your_salon.salonName , salon_password , salon_Index , signal) || [];
                     
                     const pending = salonBooking.filter(b => b.status === 'pending');
-                    const pending_user = pending.filter(b => b.deviceId != 'manual');
+                    const pending_user = pending.filter(b => b.deviceId !== 'manual');
                     const completed = salonBooking.filter(b => b.status === 'completed');
-                    const manualBookings = completed.filter(b => b.deviceId == 'manual');
+                    const manualBookings = completed.filter(b => b.deviceId === 'manual');
                     const canceled = salonBooking.filter(b => b.status === 'user canceled' || b.status === 'dash canceled');
-                    const can_manualBookings = canceled.filter(b => b.deviceId == 'manual');
+                   const canceled_user = canceled.filter(b => b.deviceId !== 'manual');
+                    const can_manualBookings = canceled.filter(b => b.deviceId === 'manual');
 
 
                     if (pendingBookings) pendingBookings.textContent = pending.length;
@@ -606,20 +694,25 @@ async function showDashboard() {
 
                     if(pending_user.length > parseInt(localStorage.getItem("before_pending_booking_count") , 10)){
                         const sound = document.getElementById('newBooking_notify');
+                        sound.pause();
+                        sound.currentTime = 0;
                         sound.play().catch(error => {
                             console.error('Error playing sound:', error);
                         });
                         console.log("newBooking_notify");
                     }
-                    if((canceled.length - can_manualBookings.length) > parseInt(localStorage.getItem("before_userCancel_booking_count") , 10)){
+                    if(canceled_user.length > parseInt(localStorage.getItem("before_userCancel_booking_count") , 10)){
                         const sound = document.getElementById('anyUserCancelBooking_notify');
+                        
+                        sound.pause();
+                        sound.currentTime = 0;
                         sound.play().catch(error => {
                             console.error('Error playing sound:', error);
                         });
                         console.log("anyUserCancelBooking_notify");
                     }
                     localStorage.setItem("before_pending_booking_count" , pending_user.length);
-                    localStorage.setItem("before_userCancel_booking_count" , (canceled.length - can_manualBookings.length));
+                    localStorage.setItem("before_userCancel_booking_count" , canceled_user.length);
         
                     renderBookings(pending, 'pending-bookings-grid' , true , "pending-before");
                     renderBookings(completed, 'completed-bookings-grid' , false , "completed-before");
@@ -2057,6 +2150,7 @@ function getRandomInt(min, max) {
 }
 
 // Book Appointment
+let isBookProcess;
 async function bookAppointment() {
     clearError('booking-error');
     
@@ -2083,14 +2177,17 @@ async function bookAppointment() {
         return;
     }
     if (!_service || _service.value == "") {
+        PlayGuidaneAudio("Guide_None_Service");
         setError('booking-error', 'Please select a service.');
         return;
     }
     if (!time || time.value == "") {
+        PlayGuidaneAudio("Guide_None_Timing");
         setError('booking-error', 'Please select a Timing.');
         return;
     }
 
+    isBookProcess = true;
     //service name
     const service = _service.substring(0, _service.indexOf("p"));
     //service price
@@ -2114,8 +2211,10 @@ async function bookAppointment() {
     let bookings = await getSpecialSalonBookingData(salon.salonId , _salonName) || [];
     const r = checkTimeSlotAvailability(salon , bookings , breaks , time.substring(0 , time.indexOf('s')) , time_take);
     if(r == "failed"){
+        PlayGuidaneAudio("Guide_AlreadyBooked");
         setError("booking-error" , 'Failed: Another Person Booked this Time');
         Init_UserBooking_Times();
+        isBookProcess = false;
         return;
     }
 
@@ -2156,9 +2255,20 @@ async function bookAppointment() {
         }
         const status = result.status;
         if(status == "success"){
+            PlayGuidaneAudio("Guide_BookingDone");
             setError('your_booking-error', 'Booking confirmed!' , true);
-            showSection('your-booked-salon')
+            
+            const userBookings = await GetUserBooking(deviceId , signal);
+            if(userBookings.length == 0){
+                PlayGuidaneAudio("Guide_AlreadyBooked");
+                setError("booking-error" , 'Failed: Another Person Booked this Time');
+                Init_UserBooking_Times();
+            }
+            else{
+                showSection('your-booked-salon')
+            }
         }else{
+            PlayGuidaneAudio("Guide_BookingError");
             setError('booking-error', 'Failed to book appointment. Please try again.');
             console.error('Error booking appointment:');
         }
@@ -2171,6 +2281,7 @@ async function bookAppointment() {
         console.error(`Error fetching data from:`, error);
         throw error;
     }
+    isBookProcess = false;
 }
 
 async function manualBook() {
@@ -2551,9 +2662,9 @@ function formatMinute(minutes) {
         const hours = Math.floor(minutes / 60);
         const remainingMinutes = minutes % 60;
         if (remainingMinutes === 0) {
-            return hours + " hrs";
+            return hours + " ghante";
         } else {
-            return hours + " hrs " + (remainingMinutes < 10 ? "0" : "") + remainingMinutes + " min";
+            return hours + " ghante, " + (remainingMinutes < 10 ? "0" : "") + remainingMinutes + " min";
         }
     }
 }

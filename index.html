@@ -49,10 +49,27 @@
     </script>
 </head>
 <body>
-    <audio id="newBooking_notify" src="https://www.salonking.shop/newBookingSound.mp3"></audio>
-    <audio id="anyUserCancelBooking_notify" src="https://www.salonking.shop/userCancelBookingSound.mp3"></audio>
+    <audio id="newBooking_notify" src="https://www.salonking.shop/NewBookingCome.mp3"></audio>
+    <audio id="anyUserCancelBooking_notify" src="https://www.salonking.shop/AnyCancelBooking.mp3"></audio>
 
-  <div class="slideshow-container">
+    <!-- User Booking -->
+    <audio class="UserGuidance" id="Guide_Name" src="https://www.salonking.shop/Guiding_Audios/Guide_Name.mp3"></audio>
+    <audio class="UserGuidance" id="Guide_None_Name" src="https://www.salonking.shop/Guiding_Audios/Guide_NoneName.mp3"></audio>
+
+    <audio class="UserGuidance" id="Guide_Number" src="https://www.salonking.shop/Guiding_Audios/Guide_Number.mp3"></audio>
+    <audio class="UserGuidance" id="Guide_None_Number" src="https://www.salonking.shop/Guiding_Audios/Guidane_NoneNumber.mp3"></audio>
+    <audio class="UserGuidance" id="Guide_Wrong_Number" src="https://www.salonking.shop/Guiding_Audios/Guide_WrongNumber.mp3"></audio>
+    
+    <audio class="UserGuidance" id="Guide_Service_OR_Time" src="https://www.salonking.shop/Guiding_Audios/Guide_ServiceOrTime.mp3"></audio>
+    <audio class="UserGuidance" id="Guide_None_Service" src="https://www.salonking.shop/Guiding_Audios/Guide_NoneService.mp3"></audio>
+    <audio class="UserGuidance" id="Guide_None_Timing" src="https://www.salonking.shop/Guiding_Audios/Guide_NoneTime.mp3"></audio>
+
+    <audio class="UserGuidance" id="Guide_AlreadyBooked" src="https://www.salonking.shop/Guiding_Audios/Guide_AlreadyBooked.mp3"></audio>
+
+    <audio class="UserGuidance" id="Guide_BookingDone" src="https://www.salonking.shop/Guiding_Audios/Guide_BookingDone.mp3"></audio>
+    <audio class="UserGuidance" id="Guide_BookingError" src="https://www.salonking.shop/Guiding_Audios/Guide_BookingError.mp3"></audio>
+    <!--  -->
+    <div class="slideshow-container">
     <div id="bg1" class="slideshow-image active"></div>
     <div id="bg2" class="slideshow-image"></div>
   </div>
@@ -60,6 +77,7 @@
     <header id="footer">
         <button id="back-btn" class="back-btn" onclick="showSection('home')">Back</button>
         <div class="logo">Salon King</div>
+        <button id="assistane-btn" class="assistane-btn" onclick="toggleAssistane()"></button>
     </header>
     <!-- Home Section -->
     <div id="home" class="section active" style="padding: 0rem;">
@@ -340,9 +358,32 @@
                                 <p style="padding-left: 40px;"><strong>| By Manual:</strong> <span id="manual-bookings">0</span></p>
                         </div>
                     </div>
+                    <div class="form-container">
+                        <h3>Manual Booking:</h3>
+                        <label for="manualBooking-timeTake">please agar kisi ki booking ho to kisi or ko nahi bulaye ga</p>
+                            
+                            
+                        <label style=" font-weight: bold;" for="manualBooking-customer-name">Customer Name</label>
+                        <input type="text" id="manualBooking-customer-name" placeholder="Here Enter Name (Optional)">
+                        <div style="height: 2px;"> </div>
+
+                        <label for="manualBooking-timeTake"><strong>Time to done</strong>:</label>
+                        <!-- <input type="number" id="manualBooking-timeTake" placeholder="Time to Done Work in Minutes" required> -->
+                        <select id="manualBooking-timeTake" required>
+                        
+                        </select>    
+                        <label><strong>Agar ap Time ko select nahi kare gai to Current Time check keya jaye ga</strong>:</label>
+                        <select id="manual-booking-time" required>
+                        
+                        </select>
+                        
+                        <p id="manual-dashboard-error" class="message"></p>
+                        <button class="btn" onclick="manualBook()">Manual Book Customer</button>
+                    </div>
                 </div>
                 <p id="dashboard-error" class="message"></p>
                 <div style="text-align: center; margin: 20px;">
+                    <h2>Main Controls</h2>
                     <!-- <button class="btn" onclick="Complete_Currect_Customer()">Complete Current Custome</button>
                     <button class="btn" onclick="Cancel_Currect_Customer()">Cancel Current Customer</button> -->
                     <button class="btn" onclick="cancelAllBookings()">Cancel All Bookings</button>
@@ -355,28 +396,6 @@
                     <br>
                     <button class="btn" onclick="showForm('salon-settings')">Settings</button>
                     <button class="btn" onclick="showSection('home')">Home</button>
-                </div>
-                <div class="form-container">
-                    <h3>Manual Booking:</h3>
-                    <label for="manualBooking-timeTake">please agar kisi ki booking ho to kisi or ko nahi bulaye ga</p>
-                        
-                        
-                    <label style=" font-weight: bold;" for="manualBooking-customer-name">Customer Name</label>
-                    <input type="text" id="manualBooking-customer-name" placeholder="Here Enter Name (Optional)">
-                    <div style="height: 2px;"> </div>
-
-                    <label for="manualBooking-timeTake"><strong>Time to done</strong>:</label>
-                    <!-- <input type="number" id="manualBooking-timeTake" placeholder="Time to Done Work in Minutes" required> -->
-                    <select id="manualBooking-timeTake" required>
-                    
-                    </select>    
-                    <label><strong>Agar ap Time ko select nahi kare gai to Current Time check keya jaye ga</strong>:</label>
-                    <select id="manual-booking-time" required>
-                    
-                    </select>
-                    
-                    <p id="manual-dashboard-error" class="message"></p>
-                    <button class="btn" onclick="manualBook()">Manual Book Customer</button>
                 </div>
 
                 <h2>Pending Bookings</h2>
@@ -396,8 +415,8 @@
     <div id="user-booking" class="section">
         <div style="height: 52px;"></div>
         <div class="form-container">
-            <h2>Book Your Appointment</h2>
-            <h2 id="booking-salon-name"></h2>
+            <h2 style="font-size: 97%;">Book Your Appointment</h2>
+            <h2 style="font-size: 95%;" id="booking-salon-name"></h2>
             <p style="font-size: 80%; text-align: left;" id="booking-owner-name"></p>
             <p style="font-size: 80%; text-align: left;" id="booking-salon-openedTime"></p> 
             <p id="booking-owner-number" class=" " , style="font-size: 80%; text-align: left;"> </p>
@@ -410,30 +429,50 @@
                 <button class="slider-btn prev" onclick="moveSlide('booking-salon', -1)">❮</button>
                 <button class="slider-btn next" onclick="moveSlide('booking-salon', 1)">❯</button>
             </div>
-            <h3 style="height: 33%; text-align: center; padding-top: 0px; background-color:rgb(255, 255, 255); border-radius: 4px; font-size: 90%; color:rgb(255, 69, 69);" id="booking-salon-discounts"></h3>
-            <hr style="margin-top: 10px; margin-bottom: 7px;">
-            <label style=" font-weight: bold;" for="customer-name">Your Name</label>
-            <input type="text" id="customer-name" placeholder="Here Enter Your Name">
-            <div style="height: 2px;"> </div>
-            <label style="font-weight: bold; margin-bottom: -4px;" for="customer-number">Your Number</label>
-            <label style="font-weight: bold; margin-bottom: -1px;" for="customer-number">(for Notify any emergency cancel or others)</label>
-            <input type="tel" id="customer-number" placeholder="Here Enter Your Number">
-            <div style="height: 2px;"> </div>
-            <label style="font-weight: bold;" for="booking-service">Select Your Service</label>
-            <select id="booking-service" required>
-                <option value="">Select Service</option>
-            </select>
-            <div style="height: 2px;"> </div>
-            <label style="font-weight: bold;" for="booking-time">Select Your Time</label>
-            <select id="booking-time" required>
-                
-            </select>
-            <div style="height: 2px;"> </div>
-            <!-- <label for="customer-image">Your Image</label>
-            <input type="file" id="customer-image" accept="image/*"> -->
+            <!-- Discounts -->
+            <h3 style="height: 50%; text-align: center; padding-top: 0px; background-color:rgb(255, 255, 255); border-radius: 4px; font-size: 90%; color:rgb(255, 69, 69);" id="booking-salon-discounts"></h3>
+
+            <hr style="margin-top: 10px;">
+            
             <p id="booking-error" class="message"></p>
-            <button class="btn" onclick="bookAppointment()">Book</button>
-            <button class="btn" onclick="showSection('home')">Back to Home</button>
+
+            <div id="booking-salon-1" style="width: 100%; display: none;">
+                <div style="height: 20px;"> </div>
+                <label style="font-size: 87%; text-align: center; margin-bottom: 10px;  font-weight: bold;" for="customer-name">Apna Name bataye</label>
+                <input style="padding-left: 20px;" type="text" id="customer-name" placeholder="Yaha par likhe Ap ka Name">
+                
+                <div style="height: 30px;"> </div>
+                <button class="btn" onclick="NextStep(2)">Next</button>
+                <button class="btn" onclick="showSection('home')">Back to Home</button>
+            </div>
+            
+            <div id="booking-salon-2" style="width: 100%; display: none;">
+                <div style="height: 20px;"> </div>
+                <label style="font-size: 87%; text-align: center; font-weight: bold; margin-bottom: 10px;" for="customer-number">Apka Phone Number</label>
+                <input style="padding-left: 20px;" type="tel" id="customer-number" placeholder="yaha par apna Number likhe">
+                <label style="font-size: 80%; text-align: center; font-weight: bold; margin-bottom: 2px;" for="customer-number">taake agar koi emergency cancel karna ho dukan dar ko</label>
+                
+                <div style="height: 30px;"> </div>
+                <button class="btn" onclick="NextStep(3)">Next</button>
+                <button class="btn" onclick="NextStep(1)">Back</button>
+            </div>
+            
+            <div id="booking-salon-3" style="width: 100%; display: block;">
+                <div style="height: 20px;"> </div>
+                <label style="font-size: 87%; text-align: center; margin-bottom: 10px; font-weight: bold;" for="booking-service">Select Your Service</label>
+                <select id="booking-service" required>
+                    <option value="">Select Service</option>
+                </select>
+
+                <label style="font-size: 87%; text-align: center; margin-top: 20px; margin-bottom: 10px; font-weight: bold;" for="booking-time">Select Your Time</label>
+                <select id="booking-time" required>
+                    
+                </select>
+                
+                <div style="height: 30px;"> </div>
+                <button class="btn" onclick="bookAppointment()">Book</button>
+                <button class="btn" onclick="NextStep(2)">Back</button>
+            </div>
         </div>
     </div>
 
