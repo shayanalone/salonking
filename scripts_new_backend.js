@@ -991,11 +991,11 @@ async function loginSalon() {
 // Register
 async function registerSalon() {
     clearError('register-error');
-    const per_code = document.getElementById('reg-permission-code')?.value.trim();
-    if (!per_code) {
-        setError('register-error', 'Please fill the Permission Code.');
-        return;
-    }
+    // const per_code = document.getElementById('reg-permission-code')?.value.trim();
+    // if (!per_code) {
+    //     setError('register-error', 'Please fill the Permission Code.');
+    //     return;
+    // }
     const ownerName = document.getElementById('reg-owner-name')?.value.trim();
     const ownerNumber = document.getElementById('reg-owner-number')?.value.trim();
     const salonName = document.getElementById('reg-salon-name')?.value.trim();
@@ -1054,7 +1054,8 @@ async function registerSalon() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ "permissionCode": per_code, 
+            body: JSON.stringify({ 
+                                //   "permissionCode": per_code, 
                                    ownerName,
                                    ownerNumber,
                                    salonName,
