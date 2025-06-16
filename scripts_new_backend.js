@@ -2,9 +2,12 @@
 const BASE_URL = 'https://salonking-backend.vercel.app'; // Replace with your actual Vercel URL
 
 const images = [
-    'https://images.unsplash.com/photo-1662125502527-bb106378d560?w=1000',
-    'https://images.unsplash.com/photo-1603291783835-12c1ebe6c701?w=1000',
-    'https://images.unsplash.com/photo-1629641320554-c8e8cfed610f?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzJ8fHNhbG9uJTIwaW50ZXJpb3J8ZW58MHwxfDB8fHwy'
+    'https://images.unsplash.com/photo-1695527081874-b674c46f40fb?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8c2Fsb24lMjBpbnRlcmlvcnxlbnwwfDF8MHx8fDA%3D',
+    'https://images.unsplash.com/photo-1619607146034-5a05296c8f9a?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHNhbG9uJTIwaW50ZXJpb3J8ZW58MHwxfDB8fHww',
+    'https://plus.unsplash.com/premium_photo-1661544239861-626b9af9499f?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjF8fHNhbG9uJTIwaW50ZXJpb3J8ZW58MHwxfDB8fHww',
+    'https://images.unsplash.com/photo-1695527081728-e3a42f0ce261?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mjd8fHNhbG9uJTIwaW50ZXJpb3J8ZW58MHwxfDB8fHww',
+    'https://images.unsplash.com/photo-1637777277435-3c44f82fd0c9?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mzl8fHNhbG9uJTIwaW50ZXJpb3J8ZW58MHwxfDB8fHww',
+    'https://images.unsplash.com/photo-1746723370709-70d89a7b7999?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTF8fHNhbG9uJTIwaW50ZXJpb3J8ZW58MHwxfDB8fHww'
 ];
 
 let index = 0;
@@ -431,7 +434,7 @@ async function renderSalons(signal) {
                 </div>
                 <div class="details">
                     <div style="height: 10px;"></div>
-                    <h3 style="font-size: 100%;  margin-top: 10px;">${salon.salonName}</h3>
+                    <p class="salon_name" style="font-size: 100%;  margin-top: 10px;">${salon.salonName}</p>
                     <div style="height: 3px;"></div>
                     <p style="font-size: 82%; margin-top: -8px;"><strong>Owner:</strong> ${salon.ownerName}</p>
                     <p style="font-size: 82%; margin-top: -10px;"><strong>Opened:</strong> ${`${convertTo12HourFormat(salon.openTime) || 'N/A'} - ${convertTo12HourFormat(salon.closeTime) || 'N/A'}`}</p>

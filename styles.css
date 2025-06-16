@@ -61,7 +61,7 @@ body {
       transition: opacity 1.5s ease-in-out;
     }
 header {
-    background-color: #374151; /* Lighter dark gray */
+    background-color: #00ff7381; /* Lighter dark gray */
     padding: 0.75rem 1rem;
     position: fixed;
     width: 100%;
@@ -161,16 +161,19 @@ header {
 }
 
 #home h1 {
-    font-size: 1.1rem;
-    color: #FFFFFF;
+    font-size: 1.7rem;
+    color: #000000;
     margin: 0.5rem 0;
     text-align: left;
-    font-weight: 600;
+    
+    font-family: "Lobster", sans-serif;
+    font-weight: 400;
+    font-style: normal;
 }
 
 #home p {
     font-size: 0.875rem;
-    color: #D1D5DB;
+    color: #000000;
     margin: 0.5rem 0;
     text-align: left;
 }
@@ -282,16 +285,24 @@ header {
     align-items: flex-start;
     margin: 0.5rem 0;
     margin-top: -3px;
-    padding-left: 0.3rem;
+    padding-left: 10%;
+    padding-right: 10%;
+    
+    width: 100%;
+    background-color: #002d87;
 }
 
 .salon-card .details p, .booking-card .details p, .dashboard .details p {
     margin: 0.25rem 0;
-    text-align: left;
+    text-align: center;
     font-size: 0.75rem;
     color: #D1D5DB;
+    
 }
-
+.salon_name{
+    font-family: 'Courier New';
+    font-weight: 800;
+}
 .salon-card .details p strong, .booking-card .details p strong, .dashboard .details p strong {
     font-weight: 600;
     color: #FFFFFF;
